@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="app_name">HLMP Connect</string>
+    
+    <string name="ssid_label">MANET Network SSID</string>
+    <string name="ssid_default">HLMP-MANET</string>
+    
+    <string name="username_label">MANET Username</string>
+    <string name="username_default">hlmpUser</string>
+    
+    <string name="ip_label">MANET IP - soon routing</string>
+    <string name="ip_default">192.168.0.1</string>
+    
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/ssid_label"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/ssid_label"/>
+
+    <EditText
+        android:id="@+id/ssid_input"
+        android:inputType="text"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/ssid_default" />
+
+    <TextView
+        android:id="@+id/username_label"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/username_label" />
+
+    <EditText
+        android:id="@+id/username_input"
+        android:inputType="text"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/username_default" />
+    
+    <TextView
+        android:id="@+id/ip_label"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/ip_label" />
+
+    <EditText
+        android:id="@+id/ip_input"
+        android:inputType="text"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/ip_default" />
+
+</LinearLayout>
