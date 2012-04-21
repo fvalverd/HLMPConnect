@@ -34,8 +34,8 @@ public class ConnectTabWidget extends TabActivity {
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 
-	    intent = new Intent().setClass(this, TransfersActivity.class);
-	    spec = tabHost.newTabSpec("transfers").setIndicator("Transfers"
+	    intent = new Intent().setClass(this, ChatActivity.class);
+	    spec = tabHost.newTabSpec("chat").setIndicator("Chat"
 //	                      ,res.getDrawable(R.drawable.ic_tab_transfers)
 	    		)
 	                  .setContent(intent);

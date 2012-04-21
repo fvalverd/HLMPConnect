@@ -10,6 +10,9 @@
     <string name="username_default">hlmpUser</string>
     
     <string name="ip_label">MANET IP - soon routing</string>
-    <string name="ip_default">192.168.0.1</string>
+    <string name="ip_default">192.168.1.9</string>
+    
+	<string name="send">Send</string>
+    <string name="chat_hint">Type here\.\.\.</string>
     
 </resources>

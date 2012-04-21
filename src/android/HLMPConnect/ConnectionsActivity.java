@@ -50,7 +50,7 @@ public class ConnectionsActivity extends ListActivity {
         					String ip = ((EditText) layout.findViewById(R.id.ip_input)).getText().toString();
         					
         					HLMPApplication application = (HLMPApplication)getApplicationContext();
-        					application.stopAdHoc();
+//        					application.stopAdHoc();
         					application.startAdHocWithIpAndUsername(ip, username);
         					
         					String values = "SSID: %s, Username: %s, IP: %s";

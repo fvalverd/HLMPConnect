@@ -10,6 +10,10 @@ import hlmp.CommLayer.Communication;
 import hlmp.CommLayer.Configuration;
 import hlmp.CommLayer.SubProtocolList;
 import hlmp.NetLayer.NetworkAdapter;
+import hlmp.SubProtocol.Chat.ChatProtocol;
+
+import android.HLMPConnect.Managers.ChatManager;
+import android.HLMPConnect.Managers.UsersManager;
 
 
 public class HLMPApplication extends Application {
@@ -20,8 +24,11 @@ public class HLMPApplication extends Application {
 //	Android Wifi Manager
 	protected WifiManager wifiManager;
 	protected boolean previousWifiSate;
-//	HLMP Communication
+
+//	HLMP
 	protected Communication communication;
+	protected ChatManager chatManager;
+	private UsersManager usersManager;
 	
 	@Override
 	public void onCreate() {
@@ -38,19 +45,24 @@ public class HLMPApplication extends Application {
 //		Set HLMP Subprotocols
 		SubProtocolList subProtocols = new SubProtocolList();
 //		this.pingProtocol = new PingProtocol(this);
-//		this.chatProtocol = new ChatProtocol(this);
 //		subProtocols.add(hlmp.SubProtocol.Ping.Types.PINGPROTOCOL, pingProtocol);
-//		subProtocols.add(hlmp.SubProtocol.Chat.Types.CHATPROTOCOL, chatProtocol);
+		this.chatManager = new ChatManager();
+		ChatProtocol chatProtocol = new ChatProtocol(chatManager);
+		subProtocols.add(hlmp.SubProtocol.Chat.Types.CHATPROTOCOL, chatProtocol);
+		this.chatManager.setChatProtocol(chatProtocol);
+		this.chatManager.setNetUser(configuration.getNetUser());
 		
 //		Create HLMP Communication
 		this.communication = new Communication(configuration, subProtocols, null);
 		this.communication.getConfiguration().setNetworkAdapter(new NetworkAdapter(wifiManager));
 //		this.communication.subscribeNetInformationEvent(this);
 //		this.communication.subscribeExceptionEvent(this);
-//		this.communication.subscribeAddUserEvent(this);
-//		this.communication.subscribeRemoveUserEvent(this);
-//		this.communication.subscribeRefreshUserEvent(this);
-//		this.communication.subscribeRefreshLocalUserEvent(this);
+		
+		this.usersManager = new UsersManager();
+		this.communication.subscribeAddUserEvent(this.usersManager);
+		this.communication.subscribeRemoveUserEvent(this.usersManager);
+		this.communication.subscribeRefreshUserEvent(this.usersManager);
+		this.communication.subscribeRefreshLocalUserEvent(this.usersManager);
 	}
 	
 	public void startAdHocWithIpAndUsername(String ip, String username) {
@@ -68,6 +80,19 @@ public class HLMPApplication extends Application {
 	public void stopAdHoc() {
 		this.communication.stopEventConsumer();
 		this.communication.disconnect();
-		
+	}
+
+	
+	public ChatManager getChatManager() {
+		return this.chatManager;
+	}
+
+	
+	public UsersManager getUsersManager() {
+		return this.usersManager;
+	}
+
+	public Communication getCommunication() {
+		return this.communication;
 	}
 }
