@@ -1,13 +1,14 @@
 package android.HLMPConnect;
 
-import hlmp.CommLayer.Communication;
-import hlmp.CommLayer.NetUser;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import hlmp.CommLayer.Communication;
+import hlmp.CommLayer.NetUser;
 
 import android.HLMPConnect.Managers.UsersManager;
 
@@ -25,16 +26,14 @@ public class UsersActivity extends Activity {
 	private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-//        	switch (msg.what) {
-//        		case ADD_USER :  {
-//		        	String user_name = (String) msg.obj;
-//		        	users.add(user_name);
-//        		}
-//        	}
-        	users.clear();
-        	for(NetUser netUser: communication.getNetUserList().userListToArray()){
-        		users.add(netUser.getName());
-    		}
+        	switch (msg.what) {
+        		case ADD_USER :  {
+        			users.clear();
+        			for(NetUser netUser: communication.getNetUserList().userListToArray()) {
+                		users.add(netUser.getName());
+            		}
+        		}
+        	}
         }
     };
     

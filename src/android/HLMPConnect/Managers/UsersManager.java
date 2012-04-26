@@ -1,6 +1,7 @@
 package android.HLMPConnect.Managers;
 
 import android.os.Handler;
+import android.util.Log;
 
 import hlmp.CommLayer.NetUser;
 import hlmp.CommLayer.Observers.AddUserEventObserverI;
@@ -13,22 +14,33 @@ import android.HLMPConnect.UsersActivity;
 
 public class UsersManager extends Thread implements AddUserEventObserverI, RemoveUserEventObserverI, RefreshUserEventObserverI, RefreshLocalUserEventObserverI {
 
+	private static final String MSG_TAG = "HLMP -> UsersManager";
+	
 	protected Handler mHandler;
 
 	public void refreshLocalUserEventUpdate(NetUser netUser) {
-		this.mHandler.obtainMessage(UsersActivity.REFRESH_LOCAL_USERS, netUser.getName()).sendToTarget();		
+		String format = "REFRESH LOCAL USER: %s";
+		Log.i(MSG_TAG, String.format(format, netUser.getName()));
+		if (mHandler != null) {
+			this.mHandler.obtainMessage(UsersActivity.REFRESH_LOCAL_USERS, netUser.getName()).sendToTarget();
+		}
 	}
 
 	public void refreshUserEventUpdate(NetUser netUser) {
+		String format = "REFRES USER: %s";
+		Log.i(MSG_TAG, String.format(format, netUser.getName()));
 		this.mHandler.obtainMessage(UsersActivity.REFRESH_USER, netUser.getName()).sendToTarget();
 	}
 
 	public void removeUserEventUpdate(NetUser netUser) {
-		// TODO Auto-generated method stub
-		
+		String format = "REMOVE USER: %s";
+		Log.i(MSG_TAG, String.format(format, netUser.getName()));
+		this.mHandler.obtainMessage(UsersActivity.REFRESH_USER, netUser.getName()).sendToTarget();
 	}
 
 	public void addUserEventUpdate(NetUser netUser) {
+		String format = "ADD USER: %s";
+		Log.i(MSG_TAG, String.format(format, netUser.getName()));
 		this.mHandler.obtainMessage(UsersActivity.ADD_USER, netUser.getName()).sendToTarget();
 	}
 

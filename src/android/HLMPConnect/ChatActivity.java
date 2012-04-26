@@ -65,9 +65,9 @@ public class ChatActivity extends Activity implements OnClickListener, OnKeyList
         this.message.setOnKeyListener(this);
         
         this.chatManager.setHandler(mHandler);
-        if (this.chatManager.isDaemon()) {
+//        if (this.chatManager.isDaemon()) {
         	this.chatManager.start();
-        }
+//        }
     }
     
     @Override
