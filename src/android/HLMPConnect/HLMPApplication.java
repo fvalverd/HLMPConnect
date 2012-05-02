@@ -13,7 +13,7 @@ import hlmp.CommLayer.Configuration;
 import hlmp.CommLayer.SubProtocolList;
 import hlmp.CommLayer.Observers.ExceptionEventObserverI;
 import hlmp.CommLayer.Observers.NetInformationEventObserverI;
-import hlmp.NetLayer.NetworkAdapter;
+//import hlmp.NetLayer.NetworkAdapter;
 import hlmp.SubProtocol.Chat.ChatProtocol;
 
 import android.HLMPConnect.Managers.ChatManager;
@@ -38,31 +38,31 @@ public class HLMPApplication extends Application implements ExceptionEventObserv
 	public void onCreate() {
 		super.onCreate();
 		
-		this.wifiManager = (WifiManager) (this.getSystemService(Context.WIFI_SERVICE));
-		this.previousWifiSate = wifiManager.isWifiEnabled();
-		
-//		Set HLMP Configurations
-		Configuration configuration = new Configuration();
-		this.usersManager = new UsersManager();
-		this.chatManager = new ChatManager();
-		
-//		Set HLMP Subprotocols
-		SubProtocolList subProtocols = new SubProtocolList();
-		ChatProtocol chatProtocol = new ChatProtocol(chatManager);
-		subProtocols.add(hlmp.SubProtocol.Chat.Types.CHATPROTOCOL, chatProtocol);
-		this.chatManager.setChatProtocol(chatProtocol);
-		this.chatManager.setNetUser(configuration.getNetUser());
-		
-//		Set HLMP Communication
-		this.communication = new Communication(configuration, subProtocols, null);
-		this.communication.getConfiguration().setNetworkAdapter(new NetworkAdapter(wifiManager));
-		
-		this.communication.subscribeAddUserEvent(this.usersManager);
-		this.communication.subscribeExceptionEvent(this);
-		this.communication.subscribeNetInformationEvent(this);
-		this.communication.subscribeRemoveUserEvent(this.usersManager);
-		this.communication.subscribeRefreshUserEvent(this.usersManager);
-		this.communication.subscribeRefreshLocalUserEvent(this.usersManager);
+//		this.wifiManager = (WifiManager) (this.getSystemService(Context.WIFI_SERVICE));
+//		this.previousWifiSate = wifiManager.isWifiEnabled();
+//		
+////		Set HLMP Configurations
+//		Configuration configuration = new Configuration();
+//		this.usersManager = new UsersManager();
+//		this.chatManager = new ChatManager();
+//		
+////		Set HLMP Subprotocols
+//		SubProtocolList subProtocols = new SubProtocolList();
+//		ChatProtocol chatProtocol = new ChatProtocol(chatManager);
+//		subProtocols.add(hlmp.SubProtocol.Chat.Types.CHATPROTOCOL, chatProtocol);
+//		this.chatManager.setChatProtocol(chatProtocol);
+//		this.chatManager.setNetUser(configuration.getNetUser());
+//		
+////		Set HLMP Communication
+//		this.communication = new Communication(configuration, subProtocols, null);
+////		this.communication.getConfiguration().setNetworkAdapter(new NetworkAdapter(wifiManager));
+//		
+//		this.communication.subscribeAddUserEvent(this.usersManager);
+//		this.communication.subscribeExceptionEvent(this);
+//		this.communication.subscribeNetInformationEvent(this);
+//		this.communication.subscribeRemoveUserEvent(this.usersManager);
+//		this.communication.subscribeRefreshUserEvent(this.usersManager);
+//		this.communication.subscribeRefreshLocalUserEvent(this.usersManager);
 	}
 
 	
@@ -80,28 +80,54 @@ public class HLMPApplication extends Application implements ExceptionEventObserv
 
 
 	public void startAdHocWithIpAndUsername(String ip, String username) {
-		Configuration configuration = this.communication.getConfiguration();
+		
+		this.wifiManager = (WifiManager) (this.getSystemService(Context.WIFI_SERVICE));
+		this.previousWifiSate = wifiManager.isWifiEnabled();
+		
+//		Set HLMP Configurations
+		Configuration configuration = new Configuration();
+		this.usersManager = new UsersManager();
+		this.chatManager = new ChatManager();
+		
+//		Set HLMP Subprotocols
+		SubProtocolList subProtocols = new SubProtocolList();
+		ChatProtocol chatProtocol = new ChatProtocol(chatManager);
+		subProtocols.add(hlmp.SubProtocol.Chat.Types.CHATPROTOCOL, chatProtocol);
+		this.chatManager.setChatProtocol(chatProtocol);
+		this.chatManager.setNetUser(configuration.getNetUser());
+		
+//		Set HLMP Communication
+		this.communication = new Communication(configuration, subProtocols, null);
+//		this.communication.getConfiguration().setNetworkAdapter(new NetworkAdapter(wifiManager));
+		
+		this.communication.subscribeAddUserEvent(this.usersManager);
+		this.communication.subscribeExceptionEvent(this);
+		this.communication.subscribeNetInformationEvent(this);
+		this.communication.subscribeRemoveUserEvent(this.usersManager);
+		this.communication.subscribeRefreshUserEvent(this.usersManager);
+		this.communication.subscribeRefreshLocalUserEvent(this.usersManager);
+		
+		
+		
+//		Configuration configuration = this.communication.getConfiguration();
+		
 		try {
 			configuration.getNetData().setIpTcpListener(InetAddress.getByName(ip));
 			configuration.getNetUser().setName(username);
-			Log.i(MSG_TAG, "startEventConsumer start");
 			this.communication.startEventConsumer();
-			Log.i(MSG_TAG, "startEventConsumer stop");
-			Log.i(MSG_TAG, "connect start");
 			this.communication.connect();
-			Log.i(MSG_TAG, "connect stop");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void stopAdHoc() {
-		Log.i(MSG_TAG, "disconnect start");
 		this.communication.disconnect();
-		Log.i(MSG_TAG, "disconnect stop");
-		Log.i(MSG_TAG, "stopEventConsumer start");
+		
+		this.chatManager.interrupt();
+		this.usersManager.interrupt();
+		
 		this.communication.stopEventConsumer();
-		Log.i(MSG_TAG, "stopEventConsumer stop");
 	}
 
 

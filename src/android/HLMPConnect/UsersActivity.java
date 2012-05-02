@@ -59,7 +59,7 @@ public class UsersActivity extends Activity {
 //        this.userManager.setUserArrayAdapter(this.users);
         
         this.userManagers.setHandler(mHandler);
-        if (this.userManagers.isDaemon()) {
+        if (!this.userManagers.isAlive()) {
         	this.userManagers.start();
         }
     }

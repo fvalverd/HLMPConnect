@@ -36,7 +36,9 @@ public class ChatManager extends Thread implements ChatHandlerI {
 	public void showMessage(NetUser netUser, String message) {
 		String message_format = "[ %s ]: %s";
 		message_format = String.format(message_format, netUser.getName(), message);
-		this.mHandler.obtainMessage(ChatActivity.GLOBAL_MESSAGE, message_format).sendToTarget();
+		if (this.mHandler != null ) {
+			this.mHandler.obtainMessage(ChatActivity.GLOBAL_MESSAGE, message_format).sendToTarget();
+		}
 	}
 
 	public void setMessageArrayAdapter(ArrayAdapter<String> messages) {
