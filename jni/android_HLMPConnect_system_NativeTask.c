@@ -30,7 +30,7 @@ JNIEXPORT jstring JNICALL Java_android_HLMPConnect_system_NativeTask_getProp
   return jstrOutput;
 }
 
-JNIEXPORT jint JNICALL Java_android_tether_system_NativeTask_runCommand
+JNIEXPORT jint JNICALL Java_android_HLMPConnect_system_NativeTask_runCommand
   (JNIEnv *env, jclass class, jstring command)
 {
   const char *commandString;

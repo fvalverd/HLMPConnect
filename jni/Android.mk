@@ -2,7 +2,6 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libnativetask
-LOCAL_SRC_FILES := android_HLMPConnect_system_NativeTask.c 
-#LOCAL_SHARED_LIBRARIES := libcutils
+LOCAL_SRC_FILES := android_HLMPConnect_system_NativeTask.c
 
 include $(BUILD_SHARED_LIBRARY)
