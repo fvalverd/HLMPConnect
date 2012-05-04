@@ -27,8 +27,8 @@ public class UsersManager extends Thread implements AddUserEventObserverI, Remov
 	}
 
 	public void refreshUserEventUpdate(NetUser netUser) {
-//		String format = "REFRES USER: %s";
-//		Log.i(MSG_TAG, String.format(format, netUser.getName()));
+		String format = "REFRES USER: %s";
+		Log.i(MSG_TAG, String.format(format, netUser.getName()));
 		if (mHandler != null) {
 			this.mHandler.obtainMessage(UsersActivity.REFRESH_USER, netUser.getName()).sendToTarget();
 		}

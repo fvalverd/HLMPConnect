@@ -11,6 +11,8 @@ import java.net.UnknownHostException;
 import hlmp.CommLayer.Communication;
 import hlmp.CommLayer.Configuration;
 import hlmp.CommLayer.SubProtocolList;
+import hlmp.CommLayer.Messages.Message;
+import hlmp.CommLayer.Observers.ErrorMessageEventObserverI;
 import hlmp.CommLayer.Observers.ExceptionEventObserverI;
 import hlmp.CommLayer.Observers.NetInformationEventObserverI;
 //import hlmp.NetLayer.NetworkAdapter;
@@ -20,7 +22,7 @@ import android.HLMPConnect.Managers.ChatManager;
 import android.HLMPConnect.Managers.UsersManager;
 
 
-public class HLMPApplication extends Application implements ExceptionEventObserverI, NetInformationEventObserverI {
+public class HLMPApplication extends Application implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI {
 	
 //	Android Wifi Manager
 	protected WifiManager wifiManager;
@@ -101,6 +103,7 @@ public class HLMPApplication extends Application implements ExceptionEventObserv
 //		this.communication.getConfiguration().setNetworkAdapter(new NetworkAdapter(wifiManager));
 		
 		this.communication.subscribeAddUserEvent(this.usersManager);
+		this.communication.subscribeErrorMessageEvent(this);
 		this.communication.subscribeExceptionEvent(this);
 		this.communication.subscribeNetInformationEvent(this);
 		this.communication.subscribeRemoveUserEvent(this.usersManager);
@@ -122,12 +125,12 @@ public class HLMPApplication extends Application implements ExceptionEventObserv
 	}
 
 	public void stopAdHoc() {
-		this.communication.disconnect();
-		
-		this.chatManager.interrupt();
-		this.usersManager.interrupt();
-		
-		this.communication.stopEventConsumer();
+		if (communication != null) {
+			this.communication.disconnect();
+			this.chatManager.interrupt();
+			this.usersManager.interrupt();
+			this.communication.stopEventConsumer();
+		}
 	}
 
 
@@ -137,9 +140,11 @@ public class HLMPApplication extends Application implements ExceptionEventObserv
 		Log.i(MSG_TAG, s);
 	}
 	
-
-
 	public void exceptionEventUpdate(Exception e) {
-		Log.e(MSG_TAG, e.toString());	
+		Log.e(MSG_TAG, " EXCEPTION: " + e.toString());	
+	}
+	
+	public void errorMessageEventUpdate(Message m) {
+		Log.e(MSG_TAG, " ERROR: " + m.toString());
 	}
 }

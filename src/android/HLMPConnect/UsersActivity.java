@@ -26,14 +26,10 @@ public class UsersActivity extends Activity {
 	private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	switch (msg.what) {
-        		case ADD_USER :  {
-        			users.clear();
-        			for(NetUser netUser: communication.getNetUserList().userListToArray()) {
-                		users.add(netUser.getName());
-            		}
-        		}
-        	}
+        	users.clear();
+			for(NetUser netUser: communication.getNetUserList().userListToArray()) {
+				users.add(netUser.getName());
+			}
         }
     };
     
