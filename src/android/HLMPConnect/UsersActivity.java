@@ -17,6 +17,7 @@ public class UsersActivity extends Activity {
     public static final int ADD_USER = 0;
     public static final int REFRESH_USER = 1;
 	public static final int REFRESH_LOCAL_USERS = 2;
+	public static final int REMOVE_USER = 3;
     
 	private Communication communication;
 	
@@ -26,10 +27,12 @@ public class UsersActivity extends Activity {
 	private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	users.clear();
-			for(NetUser netUser: communication.getNetUserList().userListToArray()) {
-				users.add(netUser.getName());
-			}
+        	if (msg.what != REFRESH_LOCAL_USERS) {
+	        	users.clear();
+				for(NetUser netUser: communication.getNetUserList().userListToArray()) {
+					users.add(netUser.getName());
+				}
+        	}
         }
     };
     

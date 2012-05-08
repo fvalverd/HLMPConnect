@@ -5,9 +5,6 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import hlmp.CommLayer.Communication;
 import hlmp.CommLayer.Configuration;
 import hlmp.CommLayer.SubProtocolList;
@@ -15,7 +12,6 @@ import hlmp.CommLayer.Messages.Message;
 import hlmp.CommLayer.Observers.ErrorMessageEventObserverI;
 import hlmp.CommLayer.Observers.ExceptionEventObserverI;
 import hlmp.CommLayer.Observers.NetInformationEventObserverI;
-//import hlmp.NetLayer.NetworkAdapter;
 import hlmp.SubProtocol.Chat.ChatProtocol;
 
 import android.HLMPConnect.Managers.ChatManager;
@@ -81,7 +77,7 @@ public class HLMPApplication extends Application implements ErrorMessageEventObs
 	}
 
 
-	public void startAdHocWithIpAndUsername(String ip, String username) {
+	public void startAdHocWithIpAndUsername(String username) {
 		
 		this.wifiManager = (WifiManager) (this.getSystemService(Context.WIFI_SERVICE));
 		this.previousWifiSate = wifiManager.isWifiEnabled();
@@ -110,18 +106,9 @@ public class HLMPApplication extends Application implements ErrorMessageEventObs
 		this.communication.subscribeRefreshUserEvent(this.usersManager);
 		this.communication.subscribeRefreshLocalUserEvent(this.usersManager);
 		
-		
-		
-//		Configuration configuration = this.communication.getConfiguration();
-		
-		try {
-			configuration.getNetData().setIpTcpListener(InetAddress.getByName(ip));
-			configuration.getNetUser().setName(username);
-			this.communication.startEventConsumer();
-			this.communication.connect();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		configuration.getNetUser().setName(username);
+		this.communication.startEventConsumer();
+		this.communication.connect();
 	}
 
 	public void stopAdHoc() {

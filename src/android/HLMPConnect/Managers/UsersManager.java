@@ -38,7 +38,7 @@ public class UsersManager extends Thread implements AddUserEventObserverI, Remov
 		String format = "REMOVE USER: %s";
 		Log.i(MSG_TAG, String.format(format, netUser.getName()));
 		if (mHandler != null) {
-			this.mHandler.obtainMessage(UsersActivity.REFRESH_USER, netUser.getName()).sendToTarget();
+			this.mHandler.obtainMessage(UsersActivity.REMOVE_USER, netUser.getName()).sendToTarget();
 		}
 	}
 

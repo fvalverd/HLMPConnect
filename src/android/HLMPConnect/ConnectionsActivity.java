@@ -47,14 +47,13 @@ public class ConnectionsActivity extends ListActivity {
         				public void onClick(DialogInterface dialog, int whichButton) {
         					String ssid = ((EditText) layout.findViewById(R.id.ssid_input)).getText().toString();
         					String username = ((EditText) layout.findViewById(R.id.username_input)).getText().toString();
-        					String ip = ((EditText) layout.findViewById(R.id.ip_input)).getText().toString();
         					
         					HLMPApplication application = (HLMPApplication)getApplicationContext();
 //        					application.stopAdHoc();
-        					application.startAdHocWithIpAndUsername(ip, username);
+        					application.startAdHocWithIpAndUsername(username);
         					
-        					String values = "SSID: %s, Username: %s, IP: %s";
-        					values = String.format(values, ssid, username, ip);
+        					String values = "SSID: %s, USERNAME: %s";
+        					values = String.format(values, ssid, username);
         					Toast.makeText(getApplicationContext(), values, Toast.LENGTH_SHORT).show();
         				}
         			});
