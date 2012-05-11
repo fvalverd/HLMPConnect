@@ -65,10 +65,6 @@ public class ChatActivity extends Activity implements OnClickListener, OnKeyList
         this.message.setOnKeyListener(this);
         
         this.chatManager.setHandler(mHandler);
-        
-        if (!this.chatManager.isAlive()) {
-        	this.chatManager.start();
-        }
     }
     
     

@@ -13,9 +13,11 @@ import hlmp.CommLayer.Observers.ErrorMessageEventObserverI;
 import hlmp.CommLayer.Observers.ExceptionEventObserverI;
 import hlmp.CommLayer.Observers.NetInformationEventObserverI;
 import hlmp.SubProtocol.Chat.ChatProtocol;
+import hlmp.SubProtocol.Ping.PingProtocol;
 
 import android.HLMPConnect.Managers.ChatManager;
 import android.HLMPConnect.Managers.UsersManager;
+import android.HLMPConnect.Managers.PingManager;
 
 
 public class HLMPApplication extends Application implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI {
@@ -27,7 +29,8 @@ public class HLMPApplication extends Application implements ErrorMessageEventObs
 //	HLMP
 	protected Communication communication;
 	protected ChatManager chatManager;
-	private UsersManager usersManager;
+	protected UsersManager usersManager;
+	protected PingManager pingManager;
 
 	public static final String MSG_TAG = "HLMP -> HLMPApplication";
 
@@ -86,11 +89,16 @@ public class HLMPApplication extends Application implements ErrorMessageEventObs
 		Configuration configuration = new Configuration();
 		this.usersManager = new UsersManager();
 		this.chatManager = new ChatManager();
+		this.pingManager = new PingManager();
 		
 //		Set HLMP Subprotocols
 		SubProtocolList subProtocols = new SubProtocolList();
-		ChatProtocol chatProtocol = new ChatProtocol(chatManager);
+		ChatProtocol chatProtocol = new ChatProtocol(this.chatManager);
+		PingProtocol pingProtocol = new PingProtocol(this.pingManager);
+		
 		subProtocols.add(hlmp.SubProtocol.Chat.Types.CHATPROTOCOL, chatProtocol);
+		subProtocols.add(hlmp.SubProtocol.Ping.Types.PINGPROTOCOL, pingProtocol);
+		
 		this.chatManager.setChatProtocol(chatProtocol);
 		this.chatManager.setNetUser(configuration.getNetUser());
 		
@@ -114,8 +122,6 @@ public class HLMPApplication extends Application implements ErrorMessageEventObs
 	public void stopAdHoc() {
 		if (communication != null) {
 			this.communication.disconnect();
-			this.chatManager.interrupt();
-			this.usersManager.interrupt();
 			this.communication.stopEventConsumer();
 		}
 	}

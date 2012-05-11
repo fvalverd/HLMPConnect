@@ -9,7 +9,7 @@ import hlmp.SubProtocol.Chat.ChatProtocol;
 import hlmp.SubProtocol.Chat.ControlI.ChatHandlerI;
 import hlmp.SubProtocol.Chat.Messages.GroupChatMessage;
 
-public class ChatManager extends Thread implements ChatHandlerI {
+public class ChatManager implements ChatHandlerI {
 
 	protected Handler mHandler;
 	protected ArrayAdapter<String> messages;

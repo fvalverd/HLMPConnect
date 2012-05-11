@@ -12,7 +12,7 @@ import hlmp.CommLayer.Observers.RemoveUserEventObserverI;
 import android.HLMPConnect.UsersActivity;
 
 
-public class UsersManager extends Thread implements AddUserEventObserverI, RemoveUserEventObserverI, RefreshUserEventObserverI, RefreshLocalUserEventObserverI {
+public class UsersManager implements AddUserEventObserverI, RemoveUserEventObserverI, RefreshUserEventObserverI, RefreshLocalUserEventObserverI {
 
 	private static final String MSG_TAG = "HLMP -> UsersManager";
 	
