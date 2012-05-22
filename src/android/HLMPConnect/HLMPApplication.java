@@ -27,14 +27,13 @@ import android.HLMPConnect.Managers.PingManager;
 
 
 public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler {
-	public static final String MSG_TAG = "HLMP -> HLMPApplication";
+	public static final String MSG_TAG = "HLMPApplication";
+	static HLMPApplication self;
 	
 	protected Communication communication;
 	protected ChatManager chatManager;
 	protected UsersManager usersManager;
 	protected PingManager pingManager;
-
-	static HLMPApplication self;
 	
 	final Handler mHandler = new Handler() {
 		@Override
@@ -52,10 +51,10 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	
 	@Override
     public void onTerminate() {
-    	Log.i("HLMPApplication", "HLMPApplication distroying...");
-        super.onTerminate();
-        Log.i("HLMPApplication", "HLMPApplication distroying... OK!");
+    	super.onTerminate();
     }
+	
+	// HLMPConnect Managers
 	
 	public ChatManager getChatManager() {
 		return this.chatManager;
@@ -65,11 +64,20 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		return this.usersManager;
 	}
 
-	public Communication getCommunication() {
-		return this.communication;
+	
+	// AdHocApp Overrides
+	
+	@Override
+	public void adHocFailed(int error) {
+		super.adHocFailed(error);
+		if (error == AdHocApp.ERROR_ROOT) {
+			//communication.disconnect();
+		}
 	}
-
-
+	
+	
+	// HLMP Access
+	
 	public void startHLMP(String username) {
 		// Set HLMP Configurations
 		Configuration configuration = new Configuration();
@@ -115,7 +123,13 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 			this.communication.stopEventConsumer();
 		}
 	}
+
+	public Communication getCommunication() {
+		return this.communication;
+	}
 	
+	
+	// HLMP Events
 	
 	public void netInformationEventUpdate(String s) {
 		Log.i(MSG_TAG, s);
@@ -130,30 +144,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	}
 
 	
-	public InetAddress getInetAddress() {
-		InetAddress inetAddress = null;
-		try {
-			inetAddress = InetAddress.getByName(this.getIPAdress());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		return inetAddress;
-	}
-
-	
-	
-	// AdHocApp Overrides
-	
-	@Override
-	public void adHocFailed(int error) {
-		super.adHocFailed(error);
-		if (error == AdHocApp.ERROR_ROOT) {
-			//communication.disconnect();
-		}
-	}
-	
-	
-	// HLMP WifiHandler API
+	// HLMP WifiHandler Implement
 	
 	public void connect() {
 		// Necessary Hanlder for context
@@ -202,4 +193,13 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		return state;
 	}
 
+	public InetAddress getInetAddress() {
+		InetAddress inetAddress = null;
+		try {
+			inetAddress = InetAddress.getByName(this.getIPAdress());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return inetAddress;
+	}
 }
