@@ -2,7 +2,6 @@ package android.HLMPConnect;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import android.os.Handler;
 import android.util.Log;
 
@@ -10,6 +9,7 @@ import hlmp.CommLayer.Communication;
 import hlmp.CommLayer.Configuration;
 import hlmp.CommLayer.SubProtocolList;
 import hlmp.CommLayer.Messages.Message;
+import hlmp.CommLayer.Observers.ConnectEventObserverI;
 import hlmp.CommLayer.Observers.ErrorMessageEventObserverI;
 import hlmp.CommLayer.Observers.ExceptionEventObserverI;
 import hlmp.CommLayer.Observers.NetInformationEventObserverI;
@@ -26,7 +26,7 @@ import android.HLMPConnect.Managers.UsersManager;
 import android.HLMPConnect.Managers.PingManager;
 
 
-public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler {
+public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler, ConnectEventObserverI {
 	public static final String MSG_TAG = "HLMPApplication";
 	static HLMPApplication self;
 	
@@ -34,6 +34,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	protected ChatManager chatManager;
 	protected UsersManager usersManager;
 	protected PingManager pingManager;
+	protected Handler tabHostHandler;
 	
 	final Handler mHandler = new Handler() {
 		@Override
@@ -54,7 +55,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
     	super.onTerminate();
     }
 	
-	// HLMPConnect Managers
+	// HLMPConnect
 	
 	public ChatManager getChatManager() {
 		return this.chatManager;
@@ -64,6 +65,9 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		return this.usersManager;
 	}
 
+	public void setTabHostHandler(Handler tabHostHandler) {
+		this.tabHostHandler = tabHostHandler;
+	}
 	
 	// AdHocApp Overrides
 	
@@ -105,6 +109,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		this.communication = new Communication(configuration, subProtocols, null, this);
 		
 		this.communication.subscribeAddUserEvent(this.usersManager);
+		this.communication.subscribeConnectEvent(this);
 		this.communication.subscribeErrorMessageEvent(this);
 		this.communication.subscribeExceptionEvent(this);
 		this.communication.subscribeNetInformationEvent(this);
@@ -143,6 +148,11 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		Log.e(MSG_TAG, " ERROR: " + m.toString());
 	}
 
+	public void connectEventUpdate() {
+		// TODO: detener el DIALOGPROGRESS de HLMP
+		tabHostHandler.sendEmptyMessage(Tabs.ACTIVE);
+	}
+	
 	
 	// HLMP WifiHandler Implement
 	
@@ -202,4 +212,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		}
 		return inetAddress;
 	}
+
+
+
 }

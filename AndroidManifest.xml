@@ -37,7 +37,7 @@
         android:name=".HLMPApplication"
         android:label="@string/app_name" >
         <activity
-            android:name=".ConnectTabWidget"
+            android:name=".Tabs"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
