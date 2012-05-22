@@ -1,9 +1,10 @@
 .classpath
 .project
 .settings
-.class
+*.class
 
 bin
 obj
 gen
-libs
+
+native/libs/
