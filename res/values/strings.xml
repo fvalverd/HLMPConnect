@@ -1,15 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  This file is part of Barnacle Wifi Tether
+  Copyright (C) 2010 by Szymon Jakubczak
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
 	
+    <!-- android.HLMPConnect -->
 	<string name="app_name">HLMP Connect</string>
-    
-    <string name="ssid_label">MANET Network SSID</string>
-    <string name="ssid_default">HLMP-MANET</string>
     
     <string name="username_label">MANET Username</string>
     <string name="username_default">hlmpUser</string>
     
 	<string name="send">Send</string>
-    <string name="chat_hint">Type here\.\.\.</string>
+    <string name="chat_hint">Type here…</string>
+    
+    
+    <!-- android.adhoc -->
+    <string name="adhocStarting">Starting…</string>
+    <string name="adhocStartingMessage">Please wait while AdHoc starting…</string>
+    <string name="adhocStarted">Wireless AdHoc Started!</string>
+    <string name="adhocStopping">Stopping…</string>
+    <string name="adhocStoppingMessage">Please wait while AdHoc stopping…</string>
+    <string name="adhocStopped">Wireless AdHoc Stopped!</string>
+    <string name="notify_running">Sharing %s AdHoc Wireless</string>
+    <string name="notify_error">Error occured</string>
+    <string name="disablewifi">Disabling Wifi Manager…</string>
+    <string name="waitwifi">Waiting until Wifi is disabled</string>
+    <string name="restarting">Restarting…</string>
+    <string name="invalidip">Invalid IP address</string>
+    <string name="current">Current: </string>
+    <string name="restartneeded">Restart for changes to take effect</string>
+    
+    <string name="conflictwifi">Wifi Manager is interfering with AdHoc!</string>
+    <string name="starterr">Could not start the process!</string>
+    <string name="dirtystop">Warning: did not finish cleanly</string>
+    <string name="unpackerr">Could not unpack binaries</string>
+    <string name="stopAppRunningService">The app is terminated while the service is running!</string>
+    <string name="destroyWhileRunning">Service destroyed while running!</string>
+    <string name="notifyingError">Notifying error</string>
+    <string name="rootErrorTitle">AdHoc Root Access</string>
+    <string name="rootErrorMessage">AdHoc requires \'su\' to access the hardware! Please, make sure you have root access.</string>
+    <string name="unexpectedErrorTitle">Unexpected AdHoc Error</string>
+    <string name="unexpectedErrorMessage">Unexpected error occured! Check the troubleshooting guide for the error printed in the log tab.</string>
+    <string name="supplicantErrorTitle">AdHoc Supplicant not available</string>
+    <string name="supplicantErrorMessage">AdHoc had trouble starting wpa_supplicant. Try again but set \'Skip wpa_supplicant\' in settings.</string>
+    <string name="assetsErrorTitle">AdHoc Assets does not exist!</string>
+    <string name="assetsErrorMessage">Check if AdHoc App have assets folder.</string>
+    <string name="unableStartForeground">Unable to invoke startForeground</string>
+    <string name="lanWextTryAgain">Settings updated, try again…</string>
+    
+    <string formatted="false" name="missedAssetsFiles">Missed %s assets file</string>
+    <string formatted="false" name="assetsProblem">Check assets files. %s STOP!</string>
+    <string formatted="false" name="creating">%s Creating…</string>
+    <string formatted="false" name="created">%s Created!</string>
+    <string formatted="false" name="starting">%s Starting…</string>
+    <string formatted="false" name="started">%s Started!</string>
+    <string formatted="false" name="stopping">%s Stopping…</string>
+    <string formatted="false" name="stopped">%s Stopped!</string>
+    <string formatted="false" name="failed">%s Failed!</string>
+    <string formatted="false" name="error">ERROR: %s</string>
+    <string formatted="false" name="execerr">Could not execute %s</string>
+    <string formatted="false" name="netschange">NETSCHANGE: AndroidWifiState=%d AppState=%d process=%s</string>
+    <string formatted="false" name="nativeProcess">Native Process exited with status: %d</string>
+
+    <!-- DO NOT TRANSLATE -->
+    <string name="lan_netmask">lan_netmask</string>
+    <string name="lan_gw">lan_gw</string>
+    <string name="lan_essid">lan_essid</string>
+    <string name="lan_bssid">lan_bssid</string>
+    <string name="lan_channel">lan_channel</string>
+    <string name="lan_wext">lan_wext</string>
+    <string name="lan_script">lan_script</string>
+    
+    <string formatted="false" name="ipFormat">170.160.%d.%d</string>
+
+    <string-array name="channel_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <!-- <item>14</item> -->
+    </string-array>
+    <string-array name="channel_names">
+        <item>1 – 2412 MHz</item>
+        <item>2 – 2417 MHz</item>
+        <item>3 – 2422 MHz</item>
+        <item>4 – 2427 MHz</item>
+        <item>5 – 2432 MHz</item>
+        <item>6 – 2437 MHz</item>
+        <item>7 – 2442 MHz</item>
+        <item>8 – 2447 MHz</item>
+        <item>9 – 2452 MHz</item>
+        <item>10 – 2457 MHz</item>
+        <item>11 – 2462 MHz</item>
+        <item>12 – 2467 MHz</item>
+        <item>13 – 2472 MHz</item>
+        <!-- <item>14 - 2484 MHz</item> -->
+    </string-array>
+    <string-array name="script_values">
+        <item></item>
+        <item>script_hero</item>
+        <item>script_samsung</item>
+        <item>script_aria</item>
+    </string-array>
+    <string-array name="script_names">
+        <item>none</item>
+        <item>Hero/Eris</item>
+        <item>Samsung</item>
+        <item>Aria/Liberty (see blog)</item>
+    </string-array>
+
+    <string name="fixUrl">http://szym.net/barnacle/fix/</string>
+    <string name="rootUrl">http://szym.net/barnacle/faq/#root</string>
+    
+    
     
 </resources>

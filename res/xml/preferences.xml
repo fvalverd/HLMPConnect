@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  This file is part of Barnacle Wifi Tether
+  Copyright (C) 2010 by Szymon Jakubczak
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Wireless LAN" >
+        <EditTextPreference
+            android:defaultValue="HLMP-MANET"
+            android:key="@string/lan_essid"
+            android:singleLine="true"
+            android:title="SSID (Network Name)" />
+
+        <ListPreference
+            android:defaultValue="4"
+            android:entries="@array/channel_names"
+            android:entryValues="@array/channel_values"
+            android:key="@string/lan_channel"
+            android:title="Channel" />
+        <ListPreference
+            android:defaultValue=""
+            android:entries="@array/script_names"
+            android:entryValues="@array/script_values"
+            android:key="@string/lan_script"
+            android:title="Custom Wifi Ad-hoc" />
+
+        <CheckBoxPreference
+            android:key="@string/lan_wext"
+            android:summary="Configure wifi directly"
+            android:title="Skip wpa_supplicant" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Advanced" >
+        <PreferenceScreen
+            android:summary="IPv4 Host Configuration"
+            android:title="IPv4" >
+            <android.adhoc.IPPreference
+                android:key="@string/lan_gw"
+                android:singleLine="true"
+                android:title="Gateway" />
+            <android.adhoc.IPPreference
+                android:defaultValue="255.255.0.0"
+                android:key="@string/lan_netmask"
+                android:singleLine="true"
+                android:title="Netmask" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

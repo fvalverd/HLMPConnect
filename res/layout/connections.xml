@@ -7,19 +7,6 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/ssid_label"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="@string/ssid_label"/>
-
-    <EditText
-        android:id="@+id/ssid_input"
-        android:inputType="text"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="@string/ssid_default" />
-
-    <TextView
         android:id="@+id/username_label"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
