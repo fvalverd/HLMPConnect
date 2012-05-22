@@ -1,12 +1,13 @@
 package android.HLMPConnect;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -16,12 +17,10 @@ import android.widget.ListView;
 
 import android.HLMPConnect.Managers.ChatManager;
 
-public class ChatActivity extends Activity implements OnClickListener, OnKeyListener {
+public class ChatActivity extends Activity implements OnKeyListener, android.content.DialogInterface.OnClickListener, android.view.View.OnClickListener {
 	
 	public static final int GLOBAL_MESSAGE = 0;
-
 	protected ChatManager chatManager;
-	
 	protected EditText message;
 	protected Button send;
 	protected ArrayAdapter<String> messages;	
@@ -38,6 +37,7 @@ public class ChatActivity extends Activity implements OnClickListener, OnKeyList
         }
     };
 
+    
     @SuppressWarnings("unchecked")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,12 +66,24 @@ public class ChatActivity extends Activity implements OnClickListener, OnKeyList
         
         this.chatManager.setHandler(mHandler);
     }
-    
-    
+     
     @Override
     public Object onRetainNonConfigurationInstance() {
         return this.messages;
     }
+    
+    @Override
+	public void onBackPressed() {
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage("Are you sure you want to exit?")
+        .setCancelable(false)
+        .setPositiveButton("YES", this)
+        .setNegativeButton("NO", this);
+
+        AlertDialog alert = builder.create();
+        alert.show();
+	}
+    
     
     public void sendMessage() {
     	String text = this.message.getText().toString();
@@ -91,5 +103,14 @@ public class ChatActivity extends Activity implements OnClickListener, OnKeyList
 
 	public void onClick(View v) {
 		this.sendMessage();
+	}
+
+	public void onClick(DialogInterface dialog, int which) {
+		if (DialogInterface.BUTTON_POSITIVE == which) {
+			super.onBackPressed();
+		}
+		else if (DialogInterface.BUTTON_NEGATIVE == which) {
+			dialog.cancel();
+		}
 	}
 }

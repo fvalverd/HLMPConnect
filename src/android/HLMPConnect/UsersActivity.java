@@ -1,6 +1,9 @@
 package android.HLMPConnect;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,7 +15,7 @@ import hlmp.CommLayer.NetUser;
 
 import android.HLMPConnect.Managers.UsersManager;
 
-public class UsersActivity extends Activity {
+public class UsersActivity extends Activity implements OnClickListener {
     
     public static final int ADD_USER = 0;
     public static final int REFRESH_USER = 1;
@@ -48,10 +51,32 @@ public class UsersActivity extends Activity {
         ListView userList = (ListView)findViewById(R.id.userList);
         userList.setTextFilterEnabled(true);
         this.users = (ArrayAdapter<String>) (this.getLastNonConfigurationInstance());
-        if (this.users == null) {
+        //if (this.users == null) {
         	this.users = new ArrayAdapter<String>(this, R.layout.list_item);
-        }
+        //}
         userList.setAdapter(this.users);
         this.userManagers.setHandler(mHandler);
     }
+
+	@Override
+	public void onBackPressed() {
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage("Are you sure you want to exit?")
+        .setCancelable(false)
+        .setPositiveButton("YES", this)
+        .setNegativeButton("NO", this);
+
+        AlertDialog alert = builder.create();
+        alert.show();
+	}
+	
+	
+	public void onClick(DialogInterface dialog, int which) {
+		if (DialogInterface.BUTTON_POSITIVE == which) {
+			super.onBackPressed();
+		}
+		else if (DialogInterface.BUTTON_NEGATIVE == which) {
+			dialog.cancel();
+		}
+	}
 }

@@ -2,6 +2,7 @@ package android.HLMPConnect;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,7 @@ import android.adhoc.basic.OnOffActivity;
 import android.HLMPConnect.HLMPApplication;
 
 
-public class ConnectionsActivity extends OnOffActivity {
+public class ConnectionsActivity extends OnOffActivity implements OnClickListener {
 
 	@Override
 	public void onDestroy() {
@@ -21,6 +22,18 @@ public class ConnectionsActivity extends OnOffActivity {
 		application.stopHLMP();
 		super.onDestroy();
 		Log.i("ConnectionsActivity", "ConnectionsActivity distroying... OK!");
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage("Are you sure you want to exit?")
+        .setCancelable(false)
+        .setPositiveButton("YES", this)
+        .setNegativeButton("NO", this);
+
+        AlertDialog alert = builder.create();
+        alert.show();
 	}
 	
 	
@@ -49,5 +62,14 @@ public class ConnectionsActivity extends OnOffActivity {
 	protected void requestStopAdHoc() {
 		HLMPApplication application = (HLMPApplication)this.getApplicationContext();
 		application.stopHLMP();
+	}
+
+	public void onClick(DialogInterface dialog, int which) {
+		if (DialogInterface.BUTTON_POSITIVE == which) {
+			super.onBackPressed();
+		}
+		else if (DialogInterface.BUTTON_NEGATIVE == which) {
+			dialog.cancel();
+		}
 	}
 }
