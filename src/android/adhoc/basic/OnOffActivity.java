@@ -30,15 +30,7 @@ import android.adhoc.AdHocService;
 
 public class OnOffActivity extends AdHocActivity implements OnClickListener {
 	
-	final static int DLG_ROOT = 1;
-    final static int DLG_ERROR = 2;
-    final static int DLG_SUPPLICANT = 3;
-    final static int DLG_ASSETS = 4;
-    final static int DLG_STARTING = 5;
-    final static int DLG_STOPPING = 6;
-	
-    
-    private ToggleButton onoff;
+	private ToggleButton onoff;
     
 
     @Override

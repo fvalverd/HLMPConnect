@@ -10,6 +10,9 @@ import hlmp.CommLayer.Configuration;
 import hlmp.CommLayer.SubProtocolList;
 import hlmp.CommLayer.Messages.Message;
 import hlmp.CommLayer.Observers.ConnectEventObserverI;
+import hlmp.CommLayer.Observers.ConnectingEventObserverI;
+import hlmp.CommLayer.Observers.DisconnectEventObserverI;
+import hlmp.CommLayer.Observers.DisconnectingEventObserverI;
 import hlmp.CommLayer.Observers.ErrorMessageEventObserverI;
 import hlmp.CommLayer.Observers.ExceptionEventObserverI;
 import hlmp.CommLayer.Observers.NetInformationEventObserverI;
@@ -26,8 +29,13 @@ import android.HLMPConnect.Managers.UsersManager;
 import android.HLMPConnect.Managers.PingManager;
 
 
-public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler, ConnectEventObserverI {
-	public static final String MSG_TAG = "HLMPApplication";
+public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler, ConnectEventObserverI, ConnectingEventObserverI, DisconnectEventObserverI, DisconnectingEventObserverI {
+	static final String MSG_TAG = "HLMPApplication";
+	static final int HLMP_STARTING_SHOW = 0;
+	static final int HLMP_STARTING_HIDE = 1;
+	static final int HLMP_STOPPING_SHOW = 2;
+	static final int HLMP_STOPPING_HIDE = 3;
+	
 	static HLMPApplication self;
 	
 	protected Communication communication;
@@ -43,6 +51,28 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		};
     };
 	
+    final Handler hlmpDialogsHandler = new Handler() {
+		@Override
+		public void handleMessage(android.os.Message msg) {
+			if (msg.what == HLMP_STARTING_SHOW) {
+				self.adHocActivity.showDialog(ConnectionsActivity.DLG_HLMP_STARTING);
+			}
+			else if (msg.what == HLMP_STARTING_HIDE) {
+				try{
+					self.adHocActivity.dismissDialog(ConnectionsActivity.DLG_HLMP_STARTING);
+			    } catch(Exception e) {}
+			}
+			else if (msg.what == HLMP_STOPPING_SHOW) {
+				self.adHocActivity.showDialog(ConnectionsActivity.DLG_HLMP_STOPPING);
+			}
+			else if (msg.what == HLMP_STOPPING_HIDE) {
+				try{
+					self.adHocActivity.dismissDialog(ConnectionsActivity.DLG_HLMP_STOPPING);
+			    } catch(Exception e) {}
+			}
+		};
+    };
+    
 	
     @Override
     public void onCreate() {
@@ -54,6 +84,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
     public void onTerminate() {
     	super.onTerminate();
     }
+	
 	
 	// HLMPConnect
 	
@@ -110,6 +141,9 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		
 		this.communication.subscribeAddUserEvent(this.usersManager);
 		this.communication.subscribeConnectEvent(this);
+		this.communication.subscribeConnectingEvent(this);
+		this.communication.subscribeDisconnectEvent(this);
+		this.communication.subscribeDisconnectingEvent(this);
 		this.communication.subscribeErrorMessageEvent(this);
 		this.communication.subscribeExceptionEvent(this);
 		this.communication.subscribeNetInformationEvent(this);
@@ -148,9 +182,22 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		Log.e(MSG_TAG, " ERROR: " + m.toString());
 	}
 
+	public void connectingEventUpdate() {
+		hlmpDialogsHandler.sendEmptyMessage(HLMP_STARTING_SHOW);
+	}
+	
 	public void connectEventUpdate() {
-		// TODO: detener el DIALOGPROGRESS de HLMP
 		tabHostHandler.sendEmptyMessage(Tabs.ACTIVE);
+		hlmpDialogsHandler.sendEmptyMessage(HLMP_STARTING_HIDE);
+	}
+	
+	public void disconnectingEventUpdate() {
+		hlmpDialogsHandler.sendEmptyMessage(HLMP_STOPPING_SHOW);
+		
+	}
+
+	public void disconnectEventUpdate() {
+		hlmpDialogsHandler.sendEmptyMessage(HLMP_STOPPING_HIDE);
 	}
 	
 	
@@ -212,7 +259,6 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		}
 		return inetAddress;
 	}
-
 
 
 }

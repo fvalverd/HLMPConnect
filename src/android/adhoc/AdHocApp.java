@@ -46,7 +46,7 @@ public class AdHocApp extends android.app.Application {
     
     private SharedPreferences prefs;
     private AdHocService adHocService = null;
-    private AdHocActivity adHocActivity = null;
+    protected AdHocActivity adHocActivity = null;
     private WifiManager wifiManager;
     private boolean previousWifiState;
     private Toast toast;

@@ -22,19 +22,21 @@
 	
     <!-- android.HLMPConnect -->
 	<string name="app_name">HLMP Connect</string>
-    
     <string name="username_label">MANET Username</string>
     <string name="username_default">hlmpUser</string>
-    
-	<string name="send">Send</string>
+    <string name="send">Send</string>
     <string name="chat_hint">Type here…</string>
+    <string name="hlmpStarting">HLMP Starting…</string>
+    <string name="hlmpStartingMessage">Please wait while HLMP starting…</string>
+    <string name="hlmpStopping">HLMP Stopping…</string>
+    <string name="hlmpStoppingMessage">Please wait while HLMP stopping…</string>
     
     
     <!-- android.adhoc -->
-    <string name="adhocStarting">Starting…</string>
+    <string name="adhocStarting">AdHoc Starting…</string>
     <string name="adhocStartingMessage">Please wait while AdHoc starting…</string>
     <string name="adhocStarted">Wireless AdHoc Started!</string>
-    <string name="adhocStopping">Stopping…</string>
+    <string name="adhocStopping">AdHoc Stopping…</string>
     <string name="adhocStoppingMessage">Please wait while AdHoc stopping…</string>
     <string name="adhocStopped">Wireless AdHoc Stopped!</string>
     <string name="notify_running">Sharing %s AdHoc Wireless</string>

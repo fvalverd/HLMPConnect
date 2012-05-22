@@ -1,6 +1,8 @@
 package android.HLMPConnect;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.util.Log;
@@ -15,6 +17,10 @@ import android.HLMPConnect.HLMPApplication;
 
 public class ConnectionsActivity extends OnOffActivity implements OnClickListener {
 
+	public static final int DLG_HLMP_STARTING = 10;
+	public static final int DLG_HLMP_STOPPING = 11;
+
+	
 	@Override
 	public void onDestroy() {
 		Log.i("ConnectionsActivity", "ConnectionsActivity distroying...");
@@ -34,6 +40,30 @@ public class ConnectionsActivity extends OnOffActivity implements OnClickListene
 
         AlertDialog alert = builder.create();
         alert.show();
+	}
+	
+	@Override
+    protected Dialog onCreateDialog(int id) {
+		Dialog dialog = super.onCreateDialog(id);
+		if (dialog == null) {
+			if(id == DLG_HLMP_STARTING) {
+				ProgressDialog progressDialog = new ProgressDialog(this);
+		    	progressDialog.setTitle(this.getString(R.string.hlmpStarting));
+		    	progressDialog.setMessage(this.getString(R.string.hlmpStartingMessage));
+		    	progressDialog.setIndeterminate(false);
+		    	progressDialog.setCancelable(true);
+		        return progressDialog;
+			}
+			else if(id == DLG_HLMP_STOPPING) {
+				ProgressDialog progressDialog = new ProgressDialog(this);
+		    	progressDialog.setTitle(this.getString(R.string.hlmpStopping));
+		    	progressDialog.setMessage(this.getString(R.string.hlmpStoppingMessage));
+		    	progressDialog.setIndeterminate(false);
+		    	progressDialog.setCancelable(true);
+		        return progressDialog;
+			}
+		}
+		return dialog; 
 	}
 	
 	
