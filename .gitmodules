@@ -1,3 +1,0 @@
-[submodule "src/android/hlmp"]
-	path = src/android/hlmp
-	url = git@github.com:fvalverd/HLMP-Java.git
