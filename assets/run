@@ -1,0 +1,49 @@
+#!/system/bin/sh
+# main runner (process manager) for barnacle, root required
+
+echo "running $0"
+
+# set defaults
+: ${brncl_lan_gw:="170.160.1.1"}
+: ${brncl_lan_netmask:="255.255.0.0"}
+: ${brncl_if_lan:="`getprop wifi.interface`"}
+: ${brncl_path:=.}
+
+# for init.rc parsing
+: ${brncl_hardware:="`getprop ro.hardware`"}
+
+export brncl_lan_gw
+export brncl_lan_netmask
+export brncl_if_lan
+export brncl_path
+export brncl_hardware
+
+# log environment for debugging
+set > $brncl_path/../app_log/environment.log 2>&1
+
+
+cd $brncl_path
+
+# load the driver
+# NOTE: Android's shell is ash and there is no "test" or "["
+: ${brncl_lan_script:=wifi}
+
+./$brncl_lan_script load
+
+# necessary hack for HTC phones
+type ip >/dev/null 2>&1 && ip route del table gprs default >/dev/null 2>&1
+
+# ifconfig $brncl_if_lan $brncl_lan_gw netmask $brncl_lan_netmask up
+./wifi config
+
+# Xperia X10 running Gingerbread needs extra time for wifi config to finish
+sleep 1
+
+# FVALVERD: Active UDP ip route
+ip route add 224.0.0.0/4 dev ${brncl_if_lan}
+
+# the association loop
+./wifi assoc
+
+# cleanup
+./wifi unload
