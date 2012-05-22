@@ -60,8 +60,10 @@ public class Tabs extends TabActivity {
 	    		).setContent(intent);
 	    tabHost.addTab(spec);
 	    
-	    tabHost.getTabWidget().getChildTabViewAt(TAB_USERS).setEnabled(false);
-	    tabHost.getTabWidget().getChildTabViewAt(TAB_CHAT).setEnabled(false);
+	    if (!application.isRunning()) {
+		    tabHost.getTabWidget().getChildTabViewAt(TAB_USERS).setEnabled(false);
+		    tabHost.getTabWidget().getChildTabViewAt(TAB_CHAT).setEnabled(false);
+	    }
 	}
 
 }

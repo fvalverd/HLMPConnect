@@ -2,7 +2,9 @@ package android.HLMPConnect;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import android.adhoc.AdHocApp;
 import android.adhoc.basic.OnOffActivity;
 import android.HLMPConnect.HLMPApplication;
 
@@ -96,6 +99,9 @@ public class ConnectionsActivity extends OnOffActivity implements OnClickListene
 
 	public void onClick(DialogInterface dialog, int which) {
 		if (DialogInterface.BUTTON_POSITIVE == which) {
+			
+			NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+			notificationManager.cancel(AdHocApp.NOTIFY_ERROR);
 			super.onBackPressed();
 		}
 		else if (DialogInterface.BUTTON_NEGATIVE == which) {

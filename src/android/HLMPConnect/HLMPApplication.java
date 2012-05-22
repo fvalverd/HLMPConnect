@@ -63,7 +63,9 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 			    } catch(Exception e) {}
 			}
 			else if (msg.what == HLMP_STOPPING_SHOW) {
-				self.adHocActivity.showDialog(ConnectionsActivity.DLG_HLMP_STOPPING);
+				try{
+					self.adHocActivity.showDialog(ConnectionsActivity.DLG_HLMP_STOPPING);
+				} catch(Exception e) {}
 			}
 			else if (msg.what == HLMP_STOPPING_HIDE) {
 				try{

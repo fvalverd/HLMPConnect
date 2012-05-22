@@ -30,19 +30,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import android.HLMPConnect.R;
+import android.HLMPConnect.Tabs;
 
 
 public class AdHocApp extends android.app.Application {
     final static String TAG = "AdHocApp";
     public static String app_name;
     
+    public final static int NOTIFY_RUNNING = 0;
+    public final static int NOTIFY_ERROR = 1;
     public final static int ERROR_ROOT = 1;
     public final static int ERROR_OTHER = 2;
     public final static int ERROR_SUPPLICANT = 3;
     public final static int ERROR_ASSETS = 4;
-
-    final static int NOTIFY_RUNNING = 0;
-    final static int NOTIFY_ERROR = 1;
     
     private SharedPreferences prefs;
     private AdHocService adHocService = null;
@@ -72,7 +72,7 @@ public class AdHocApp extends android.app.Application {
         this.notification.flags |= Notification.FLAG_ONGOING_EVENT;
         
         String notify_error = getString(R.string.notify_error);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, AdHocActivity.class), 0);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, Tabs.class), 0);
         this.notificationError = new Notification(R.drawable.barnacle_error, notify_error, 0);
         this.notificationError.setLatestEventInfo(this, app_name, notify_error, pi);
         this.notificationError.flags = Notification.FLAG_AUTO_CANCEL;
@@ -84,8 +84,8 @@ public class AdHocApp extends android.app.Application {
         Log.d(TAG, String.format(getString(R.string.created), this.getClass().getSimpleName()));
         
         if (!NativeHelper.unzipAssets(this)) {
-            Log.e(TAG, getString(R.string.unpackerr));
-           this.adHocFailed(ERROR_ASSETS);
+        	Log.e(TAG, getString(R.string.unpackerr));
+        	this.adHocFailed(ERROR_ASSETS);
         }
     }
 
@@ -168,7 +168,7 @@ public class AdHocApp extends android.app.Application {
         String runningMessage = String.format(notifyRunningFormat, essid);
         
         this.notification.tickerText = runningMessage; 
-        Intent ni = new Intent(this, AdHocActivity.class);
+        Intent ni = new Intent(this, Tabs.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, ni, 0);
         this.notification.setLatestEventInfo(this, app_name, runningMessage, pi);
         this.notificationManager.notify(NOTIFY_RUNNING, notification);
