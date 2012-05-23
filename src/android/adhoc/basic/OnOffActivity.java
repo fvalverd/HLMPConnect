@@ -50,6 +50,7 @@ public class OnOffActivity extends AdHocActivity implements OnClickListener {
 		}
 	}
 
+    
     protected void requestStartAdHoc() {
     	this.adHocApp.startAdHoc();
 	}

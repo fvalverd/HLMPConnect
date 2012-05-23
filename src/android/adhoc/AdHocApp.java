@@ -91,13 +91,11 @@ public class AdHocApp extends android.app.Application {
 
     @Override
     public void onTerminate() {
-    	Log.i("AdHocApp", "AdHocApp distroying...");
-        if (this.adHocService != null) {
+    	if (this.adHocService != null) {
         	Log.e(TAG, getString(R.string.stopAppRunningService));
             this.stopAdHoc();
         }
         super.onTerminate();
-        Log.i("AdHocApp", "AdHocApp distroying... OK!");
     }
     
     
