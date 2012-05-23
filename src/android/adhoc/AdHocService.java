@@ -326,9 +326,9 @@ public class AdHocService extends android.app.Service {
     	envlist.add("brncl_path=" + NativeHelper.app_bin.getAbsolutePath());
 
     	String[] ret = (String[]) envlist.toArray(new String[0]);
-    	for (String s : ret) {
-    		Log.i(TAG, "set env: " + s);
-    	}
+//    	for (String s : ret) {
+//    		Log.d(TAG, "set env: " + s);
+//    	}
     	return ret;
     }
 

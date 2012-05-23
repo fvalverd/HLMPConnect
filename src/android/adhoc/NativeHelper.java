@@ -56,7 +56,7 @@ public class NativeHelper {
 
 				if (file.exists()) {
 					file.delete();
-					Log.i(TAG, "rm " + file.getAbsolutePath());
+//					Log.d(TAG, "rm " + file.getAbsolutePath());
 				}
 
 				FileOutputStream fos = new FileOutputStream(file);
@@ -89,7 +89,7 @@ public class NativeHelper {
 
 	public static void chmod(String modestr, File path) {
 		String absolute_path = path.getAbsolutePath();
-		Log.i(TAG, "chmod " + modestr + " " + absolute_path);
+//		Log.d(TAG, "chmod " + modestr + " " + absolute_path);
 		try {
 			Class<?> fileUtils = Class.forName("android.os.FileUtils");
 			Method setPermissions = fileUtils.getMethod("setPermissions", String.class,
