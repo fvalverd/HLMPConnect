@@ -121,9 +121,9 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	public void startHLMP(String username) {
 		// Set HLMP Configurations
 		Configuration configuration = new Configuration();
-		if (this.usersManager == null) {
+		//if (this.usersManager == null) {
 			this.usersManager = new UsersManager();
-		}
+		//}
 		if (this.chatManager == null) {
 			this.chatManager = new ChatManager();
 		}

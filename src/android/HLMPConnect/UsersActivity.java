@@ -44,17 +44,22 @@ public class UsersActivity extends Activity implements OnClickListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    	
         HLMPApplication application = (HLMPApplication)getApplicationContext();
         this.userManagers = application.getUsersManager();
         this.communication = application.getCommunication();
+        
+        
         this.setContentView(R.layout.users);
+        
         ListView userList = (ListView)findViewById(R.id.userList);
         userList.setTextFilterEnabled(true);
         this.users = (ArrayAdapter<String>) (this.getLastNonConfigurationInstance());
-        //if (this.users == null) {
+        if (this.users == null) {
         	this.users = new ArrayAdapter<String>(this, R.layout.list_item);
-        //}
+        }
         userList.setAdapter(this.users);
+        
         this.userManagers.setHandler(mHandler);
     }
 
