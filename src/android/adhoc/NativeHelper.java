@@ -46,7 +46,8 @@ public class NativeHelper {
 			final String[] assetList = am.list("");
 
 			for (String asset : assetList) {
-				if (asset.equals("images") || asset.equals("sounds") || asset.equals("webkit")) {
+				Log.d(NativeHelper.TAG, "ASSET=" + asset);
+				if (asset.equals("images") || asset.equals("sounds") || asset.equals("webkit") || asset.equals("fonts")) {
 					continue;
 				}
 
@@ -89,7 +90,7 @@ public class NativeHelper {
 
 	public static void chmod(String modestr, File path) {
 		String absolute_path = path.getAbsolutePath();
-//		Log.d(TAG, "chmod " + modestr + " " + absolute_path);
+		Log.d(TAG, "chmod " + modestr + " " + absolute_path);
 		try {
 			Class<?> fileUtils = Class.forName("android.os.FileUtils");
 			Method setPermissions = fileUtils.getMethod("setPermissions", String.class,
