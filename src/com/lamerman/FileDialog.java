@@ -21,6 +21,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import android.HLMPConnect.R;
+
+
 /**
  * Activity para escolha de arquivos/diretorios.
  * 
@@ -114,8 +117,6 @@ public class FileDialog extends ListActivity {
 		selectButton = (Button) findViewById(R.id.fdButtonSelect);
 		selectButton.setEnabled(false);
 		selectButton.setOnClickListener(new OnClickListener() {
-
-			@Override
 			public void onClick(View v) {
 				if (selectedFile != null) {
 					getIntent().putExtra(RESULT_PATH, selectedFile.getPath());
@@ -127,8 +128,6 @@ public class FileDialog extends ListActivity {
 
 		final Button newButton = (Button) findViewById(R.id.fdButtonNew);
 		newButton.setOnClickListener(new OnClickListener() {
-
-			@Override
 			public void onClick(View v) {
 				setCreateVisible(v);
 
@@ -153,8 +152,6 @@ public class FileDialog extends ListActivity {
 
 		final Button cancelButton = (Button) findViewById(R.id.fdButtonCancel);
 		cancelButton.setOnClickListener(new OnClickListener() {
-
-			@Override
 			public void onClick(View v) {
 				setSelectVisible(v);
 			}
@@ -162,8 +159,6 @@ public class FileDialog extends ListActivity {
 		});
 		final Button createButton = (Button) findViewById(R.id.fdButtonCreate);
 		createButton.setOnClickListener(new OnClickListener() {
-
-			@Override
 			public void onClick(View v) {
 				if (mFileName.getText().length() > 0) {
 					getIntent().putExtra(RESULT_PATH, currentPath + "/" + mFileName.getText());
@@ -322,8 +317,6 @@ public class FileDialog extends ListActivity {
 				new AlertDialog.Builder(this).setIcon(R.drawable.icon)
 						.setTitle("[" + file.getName() + "] " + getText(R.string.cant_read_folder))
 						.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-							@Override
 							public void onClick(DialogInterface dialog, int which) {
 
 							}
