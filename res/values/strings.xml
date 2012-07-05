@@ -141,6 +141,7 @@
     
 
     <!-- com.lamerman -->
+    <string name="FileDialogTitle">Select a file</string>
     <string name="location">Location</string>
     <string name="cant_read_folder">folder can\'t be read!</string>
     <string name="nnew">New</string>

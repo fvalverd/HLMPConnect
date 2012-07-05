@@ -63,7 +63,11 @@
             android:name="android.adhoc.SettingsActivity"
             android:launchMode="singleTop" >
         </activity>
-
+        <activity
+            android:name="com.lamerman.FileDialog"
+            android:label="@string/FileDialogTitle" >
+        </activity>
+        
         <service
             android:name="android.adhoc.AdHocService"
             android:icon="@drawable/barnacle_head"
