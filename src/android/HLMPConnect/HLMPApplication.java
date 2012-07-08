@@ -1,5 +1,6 @@
 package android.HLMPConnect;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import android.os.Handler;
@@ -20,65 +21,75 @@ import hlmp.NetLayer.Constants.IpState;
 import hlmp.NetLayer.Constants.WifiConnectionState;
 import hlmp.NetLayer.Interfaces.WifiHandler;
 import hlmp.SubProtocol.Chat.ChatProtocol;
+import hlmp.SubProtocol.FileTransfer.FileData;
+import hlmp.SubProtocol.FileTransfer.FileInformation;
+import hlmp.SubProtocol.FileTransfer.FileTransferProtocol;
+import hlmp.SubProtocol.FileTransfer.Interfaces.ManageDirectory;
 import hlmp.SubProtocol.Ping.PingProtocol;
 
 import android.adhoc.AdHocApp;
 import android.adhoc.AdHocService;
 import android.HLMPConnect.Managers.ChatManager;
+import android.HLMPConnect.Managers.FilesManager;
 import android.HLMPConnect.Managers.UsersManager;
 import android.HLMPConnect.Managers.PingManager;
 
 
-public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler, ConnectEventObserverI, ConnectingEventObserverI, DisconnectEventObserverI, DisconnectingEventObserverI {
+public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler, ConnectEventObserverI, ConnectingEventObserverI, DisconnectEventObserverI, DisconnectingEventObserverI, ManageDirectory {
 	static final String MSG_TAG = "HLMPApplication";
+	
 	static final int HLMP_STARTING_SHOW = 0;
 	static final int HLMP_STARTING_HIDE = 1;
 	static final int HLMP_STOPPING_SHOW = 2;
 	static final int HLMP_STOPPING_HIDE = 3;
 	
-	static HLMPApplication self;
+	
 	
 	protected Communication communication;
 	protected ChatManager chatManager;
 	protected UsersManager usersManager;
 	protected PingManager pingManager;
+	protected FilesManager filesManager;
 	protected Handler tabHostHandler;
 	
-	final Handler mHandler = new Handler() {
+	static final Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(android.os.Message msg) {
 			self.startAdHoc();
 		};
     };
 	
-    final Handler hlmpDialogsHandler = new Handler() {
+    static final Handler hlmpDialogsHandler = new Handler() {
 		@Override
 		public void handleMessage(android.os.Message msg) {
 			if (msg.what == HLMP_STARTING_SHOW) {
-				self.adHocActivity.showDialog(ConnectionsActivity.DLG_HLMP_STARTING);
+				self.adHocActivity.showDialog(ConnectionActivity.DLG_HLMP_STARTING);
 			}
 			else if (msg.what == HLMP_STARTING_HIDE) {
 				try{
-					self.adHocActivity.dismissDialog(ConnectionsActivity.DLG_HLMP_STARTING);
+					self.adHocActivity.dismissDialog(ConnectionActivity.DLG_HLMP_STARTING);
 			    } catch(Exception e) {}
 			}
 			else if (msg.what == HLMP_STOPPING_SHOW) {
 				try{
-					self.adHocActivity.dismissDialog(ConnectionsActivity.DLG_HLMP_STARTING);
+					self.adHocActivity.dismissDialog(ConnectionActivity.DLG_HLMP_STARTING);
 			    } catch(Exception e) {}
 				try{
-					self.adHocActivity.showDialog(ConnectionsActivity.DLG_HLMP_STOPPING);
+					self.adHocActivity.showDialog(ConnectionActivity.DLG_HLMP_STOPPING);
 				} catch(Exception e) {}
 			}
 			else if (msg.what == HLMP_STOPPING_HIDE) {
 				try{
-					self.adHocActivity.dismissDialog(ConnectionsActivity.DLG_HLMP_STOPPING);
+					self.adHocActivity.dismissDialog(ConnectionActivity.DLG_HLMP_STOPPING);
 			    } catch(Exception e) {}
 			}
 		};
     };
-    
 	
+    static HLMPApplication self;
+    
+    
+    
     @Override
     public void onCreate() {
     	super.onCreate();
@@ -101,6 +112,10 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		return this.usersManager;
 	}
 
+	public FilesManager getFilesManager() {
+		return this.filesManager;
+	}
+	
 	public void setTabHostHandler(Handler tabHostHandler) {
 		this.tabHostHandler = tabHostHandler;
 	}
@@ -121,9 +136,11 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	public void startHLMP(String username) {
 		// Set HLMP Configurations
 		Configuration configuration = new Configuration();
-		//if (this.usersManager == null) {
-			this.usersManager = new UsersManager();
-		//}
+		
+		this.usersManager = new UsersManager();
+		if (this.filesManager == null) {
+			this.filesManager = new FilesManager();
+		}
 		if (this.chatManager == null) {
 			this.chatManager = new ChatManager();
 		}
@@ -131,8 +148,12 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 			this.pingManager = new PingManager();
 		}
 		
+		
+		
 		// Set HLMP Subprotocols
+		
 		SubProtocolList subProtocols = new SubProtocolList();
+		
 		ChatProtocol chatProtocol = new ChatProtocol(this.chatManager);
 		subProtocols.add(hlmp.SubProtocol.Chat.Types.CHATPROTOCOL, chatProtocol);
 		this.chatManager.setChatProtocol(chatProtocol);
@@ -141,22 +162,39 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		PingProtocol pingProtocol = new PingProtocol(this.pingManager);
 		subProtocols.add(hlmp.SubProtocol.Ping.Types.PINGPROTOCOL, pingProtocol);
 		
+		FileData fileData = new FileData(this);
+		FileTransferProtocol fileTransferProtocol = new FileTransferProtocol(this.filesManager, this.filesManager, fileData);
+		subProtocols.add(hlmp.SubProtocol.FileTransfer.Constants.FileTransferProtocolType.FILETRANSFERPROTOCOL, fileTransferProtocol);
+		this.filesManager.setFileTranfersProtocol(fileTransferProtocol);
+
+		
 		// Set HLMP Communication
+		
 		this.communication = new Communication(configuration, subProtocols, null, this);
 		
 		this.communication.subscribeAddUserEvent(this.usersManager);
+		this.communication.subscribeAddUserEvent(fileTransferProtocol);
 		this.communication.subscribeConnectEvent(this);
+		this.communication.subscribeConnectEvent(fileTransferProtocol);
 		this.communication.subscribeConnectingEvent(this);
 		this.communication.subscribeDisconnectEvent(this);
+		this.communication.subscribeDisconnectEvent(fileTransferProtocol);
 		this.communication.subscribeDisconnectingEvent(this);
 		this.communication.subscribeErrorMessageEvent(this);
 		this.communication.subscribeExceptionEvent(this);
 		this.communication.subscribeNetInformationEvent(this);
+		this.communication.subscribeReconnectingEvent(fileTransferProtocol);
 		this.communication.subscribeRemoveUserEvent(this.usersManager);
+		this.communication.subscribeRemoveUserEvent(this.filesManager);
 		this.communication.subscribeRefreshUserEvent(this.usersManager);
 		this.communication.subscribeRefreshLocalUserEvent(this.usersManager);
 		
+		
+		
 		configuration.getNetUser().setName(username);
+		
+		this.filesManager.setCommunication(this.communication);
+		
 		this.communication.startEventConsumer();
 		this.communication.connect();
 	}
@@ -263,6 +301,27 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 			e.printStackTrace();
 		}
 		return inetAddress;
+	}
+
+	
+	
+	
+	
+	public String createDownloadDir() {
+		// TODO: si es posible utilizar SDCARD
+		
+		File downloadDir = getDir(FilesActivity.DOWNLOAD_DIR_NAME_SUFIX, MODE_WORLD_READABLE);
+		Log.d(MSG_TAG, downloadDir.getAbsolutePath());
+		return downloadDir.getAbsolutePath();
+	}
+
+	public void loadSharedFiles(FileData fileData) {
+		// TODO: si es posible utilizar SDCARD
+		
+		File sharedDir = getDir(FilesActivity.SHARED_DIR_NAME_SUFIX, MODE_WORLD_READABLE);
+		for (File file : sharedDir.listFiles()) {
+            fileData.addFile(new FileInformation(file.getName(), file.length(), file.getAbsolutePath()));
+        }
 	}
 
 

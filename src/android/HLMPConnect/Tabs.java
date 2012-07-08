@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TabHost;
 
+
 public class Tabs extends TabActivity {
 	public static final int ACTIVE = 0;
 	public static final int INACTIVE = 1;
 	
 	private static int TAB_USERS = 1;
 	private static int TAB_CHAT = 2;
+	private static int TAB_FILES = 3;
 	
 	private TabHost tabHost;
 	
@@ -21,10 +23,12 @@ public class Tabs extends TabActivity {
 			if (msg.what == ACTIVE) {
 				tabHost.getTabWidget().getChildTabViewAt(TAB_USERS).setEnabled(true);
 			    tabHost.getTabWidget().getChildTabViewAt(TAB_CHAT).setEnabled(true);
+			    tabHost.getTabWidget().getChildTabViewAt(TAB_FILES).setEnabled(true);
 			}
 			else if (msg.what == INACTIVE) {
 				tabHost.getTabWidget().getChildTabViewAt(TAB_USERS).setEnabled(false);
 			    tabHost.getTabWidget().getChildTabViewAt(TAB_CHAT).setEnabled(false);
+			    tabHost.getTabWidget().getChildTabViewAt(TAB_FILES).setEnabled(false);
 			}
 		};
     };
@@ -42,8 +46,8 @@ public class Tabs extends TabActivity {
 	    TabHost.TabSpec spec;
 	    Intent intent;
 
-	    intent = new Intent().setClass(this, ConnectionsActivity.class);
-	    spec = tabHost.newTabSpec("connections").setIndicator("Connections"
+	    intent = new Intent().setClass(this, ConnectionActivity.class);
+	    spec = tabHost.newTabSpec("connection").setIndicator("Connection"
 //	                      ,res.getDrawable(R.drawable.ic_tab_connections)
 	    		).setContent(intent);
 	    tabHost.addTab(spec);
@@ -56,14 +60,20 @@ public class Tabs extends TabActivity {
 
 	    intent = new Intent().setClass(this, ChatActivity.class);
 	    spec = tabHost.newTabSpec("chat").setIndicator("Chat"
-//	                      ,res.getDrawable(R.drawable.ic_tab_transfers)
+//	                      ,res.getDrawable(R.drawable.ic_tab_chat)
+	    		).setContent(intent);
+	    tabHost.addTab(spec);
+	    
+	    intent = new Intent().setClass(this, FilesActivity.class);
+	    spec = tabHost.newTabSpec("files").setIndicator("Files"
+//	                      ,res.getDrawable(R.drawable.ic_tab_files)
 	    		).setContent(intent);
 	    tabHost.addTab(spec);
 	    
 	    if (!application.isRunning()) {
 		    tabHost.getTabWidget().getChildTabViewAt(TAB_USERS).setEnabled(false);
 		    tabHost.getTabWidget().getChildTabViewAt(TAB_CHAT).setEnabled(false);
+		    tabHost.getTabWidget().getChildTabViewAt(TAB_FILES).setEnabled(false);
 	    }
 	}
-
 }

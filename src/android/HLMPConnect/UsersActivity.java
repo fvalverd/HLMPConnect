@@ -15,6 +15,8 @@ import hlmp.CommLayer.NetUser;
 
 import android.HLMPConnect.Managers.UsersManager;
 
+//TODO: agregar ping, chat y transferencia de archivos
+
 public class UsersActivity extends Activity implements OnClickListener {
     
     public static final int ADD_USER = 0;

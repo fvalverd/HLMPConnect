@@ -18,13 +18,12 @@ import android.adhoc.basic.OnOffActivity;
 import android.HLMPConnect.HLMPApplication;
 
 
-public class ConnectionsActivity extends OnOffActivity implements OnClickListener {
+public class ConnectionActivity extends OnOffActivity implements OnClickListener {
 
 	public static final int DLG_HLMP_STARTING = 10;
 	public static final int DLG_HLMP_STOPPING = 11;
 
 	
-	@Override
 	public void onDestroy() {
 		Log.i("ConnectionsActivity", "ConnectionsActivity distroying...");
 		HLMPApplication application = (HLMPApplication)getApplicationContext();
@@ -75,7 +74,7 @@ public class ConnectionsActivity extends OnOffActivity implements OnClickListene
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 		final HLMPApplication application = (HLMPApplication)getApplicationContext();
-		final View layout = inflater.inflate(R.layout.connections, (ViewGroup) findViewById(R.id.layout_root));
+		final View layout = inflater.inflate(R.layout.connection, (ViewGroup) findViewById(R.id.layout_root));
 		builder.setView(layout)
 		.setPositiveButton("Connect", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {

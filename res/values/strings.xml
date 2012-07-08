@@ -139,6 +139,8 @@
     <string name="fixUrl">http://szym.net/barnacle/fix/</string>
     <string name="rootUrl">http://szym.net/barnacle/faq/#root</string>
     
+    <!-- com.lamerman -->
+    <string name="addFile">Add File</string>
 
     <!-- com.lamerman -->
     <string name="FileDialogTitle">Select a file</string>
