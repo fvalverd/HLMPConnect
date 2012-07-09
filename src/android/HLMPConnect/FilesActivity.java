@@ -11,7 +11,7 @@ import android.widget.TabHost;
 import android.HLMPConnect.FileTransfer.CommunityFilesActivity;
 import android.HLMPConnect.FileTransfer.DownloadFilesActivity;
 import android.HLMPConnect.FileTransfer.SharedFilesActivity;
-import android.HLMPConnect.FileTransfer.TransferStateFilesActivity;
+import android.HLMPConnect.FileTransfer.StateFilesActivity;
 import android.HLMPConnect.Managers.FilesManager;
 
 
@@ -51,7 +51,7 @@ public class FilesActivity extends TabActivity implements OnClickListener {
 	    		).setContent(intent);
 	    this.tabHost.addTab(spec);
 	    
-	    intent = new Intent().setClass(this, TransferStateFilesActivity.class);
+	    intent = new Intent().setClass(this, StateFilesActivity.class);
 	    spec = this.tabHost.newTabSpec("state").setIndicator("State"
 //	                      ,res.getDrawable(R.drawable.ic_tab_state)
 	    		).setContent(intent);

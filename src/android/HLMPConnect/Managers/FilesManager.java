@@ -17,6 +17,7 @@ import hlmp.SubProtocol.FileTransfer.ControlI.FileListHandlerI;
 
 import android.HLMPConnect.FileTransfer.CommunityFilesActivity;
 import android.HLMPConnect.FileTransfer.DownloadFilesActivity;
+import android.HLMPConnect.FileTransfer.StateFilesActivity;
 
 
 public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserEventObserverI {
@@ -27,6 +28,7 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	protected FileTransferProtocol fileTransferProtocol;
 	protected Handler communityFilesHandler;
 	protected Handler downloadFilesHandler;
+	protected Handler stateFilesHandler;
 	protected Hashtable<InetAddress, FileInformationList> communityFiles;
 	protected Toast toast;
 	
@@ -48,6 +50,10 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		this.downloadFilesHandler = downloadFilesHandler;
 	}
 
+	public void setStateFilesHandler(Handler stateFilesHandler) {
+		this.stateFilesHandler = stateFilesHandler;
+	}
+	
 	public void setFileTranfersProtocol(FileTransferProtocol fileTransferProtocol) {
 		this.fileTransferProtocol = fileTransferProtocol;
 	}
@@ -109,8 +115,17 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	//	// Download
 	
 	public void downloadFileQueued(NetUser netUser, String fileHandlerId, String fileName) {
-		// TODO Auto-generated method stub
-		
+		String size = null;
+		for (FileInformation fileInformation : communityFiles.get(netUser.getIp()).toArray()) {
+			if (fileInformation.getName() == fileName) {
+				size = "" + fileInformation.getSize();
+			}
+		}
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.ADD_DOWNLOAD,
+					new String[] {fileHandlerId, fileName, size}).sendToTarget();
+		}
 	}
 
 	public void downloadFileOpened(String fileHandlerId) {
@@ -119,25 +134,36 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 	public void downloadFileTransfer(String fileHandlerId, int percent) {
-		// TODO Auto-generated method stub
-		
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.UPDATE_DOWNLOAD_PERCENT,
+					percent,
+					0,
+					fileHandlerId).sendToTarget();
+		}
 	}
 
 	public void downloadFileComplete(String fileHandlerId, String path) {
 		if (this.downloadFilesHandler != null) {
 			this.downloadFilesHandler.obtainMessage(DownloadFilesActivity.UPDATE_USERS_LIST).sendToTarget();
 		}
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.UPDATE_DOWNLOAD_PERCENT,
+					100,
+					0,
+					fileHandlerId).sendToTarget();
+		}
 	}
 
 	public void downloadFileFailed(String fileHandlerId) {
-		// TODO Auto-generated method stub
-		
+		// TODO: Notificar en el state que hubo un problema
 	}
 
 	//	// Upload
 	
 	public void uploadFileQueued(NetUser netUser, String fileHandlerId, String fileName) {
-		// TODO Auto-generated method stub
+		// TODO: Agregar a la lista de estados que se comparte un archivo
 		
 	}
 
@@ -147,16 +173,21 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 	public void uploadFileTransfer(String fileHandlerId, int percent) {
-		// TODO Auto-generated method stub
-		
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.UPDATE_UPLOAD_PERCENT,
+					percent,
+					0,
+					fileHandlerId).sendToTarget();
+		}
 	}
 
 	public void uploadFileComplete(String fileHandlerId) {
-		// TODO Auto-generated method stub
+		// TODO: Agregar el progress 100 para el archivo que se termino se subir
 		
 	}
 
 	public void uploadFileFailed(String fileHandlerId) {
-		// TODO Auto-generated method stub
+		// TODO: Notificar en la lista de estados que no se puede seguir subiendo
 	}
 }
