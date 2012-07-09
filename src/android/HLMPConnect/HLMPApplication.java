@@ -304,14 +304,20 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	}
 
 	
+	// HLMP FileData of FileTransferProtocol Implemet
 	
-	
+	public String createSharedDir() {
+		// TODO: si es posible utilizar SDCARD
+		File sharedDir = getDir(FilesActivity.SHARED_DIR_NAME_SUFIX, MODE_WORLD_READABLE);
+		Log.d(MSG_TAG, "SharedDir = " + sharedDir.getAbsolutePath());
+		return sharedDir.getAbsolutePath();
+	}
 	
 	public String createDownloadDir() {
 		// TODO: si es posible utilizar SDCARD
 		
 		File downloadDir = getDir(FilesActivity.DOWNLOAD_DIR_NAME_SUFIX, MODE_WORLD_READABLE);
-		Log.d(MSG_TAG, downloadDir.getAbsolutePath());
+		Log.d(MSG_TAG, "DownloadDir = " + downloadDir.getAbsolutePath());
 		return downloadDir.getAbsolutePath();
 	}
 
@@ -324,5 +330,5 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
         }
 	}
 
-
+	
 }

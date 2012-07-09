@@ -1,14 +1,16 @@
 package android.HLMPConnect;
 
-import android.app.Activity;
+import java.util.ArrayList;
+import java.util.HashMap;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
 
 import hlmp.CommLayer.Communication;
 import hlmp.CommLayer.NetUser;
@@ -17,33 +19,40 @@ import android.HLMPConnect.Managers.UsersManager;
 
 //TODO: agregar ping, chat y transferencia de archivos
 
-public class UsersActivity extends Activity implements OnClickListener {
+public class UsersActivity extends ListActivity implements OnClickListener {
     
     public static final int ADD_USER = 0;
     public static final int REFRESH_USER = 1;
 	public static final int REFRESH_LOCAL_USERS = 2;
 	public static final int REMOVE_USER = 3;
+	
+	protected static final String USERNAME = "USERNAME";
+	protected static final String IP = "IP";
     
 	private Communication communication;
-	
 	protected UsersManager userManagers;
-	protected ArrayAdapter<String> users;
+	protected ArrayList<HashMap<String, String>> users;
+	private SimpleAdapter adapter;
 
 	private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
         	if (msg.what != REFRESH_LOCAL_USERS) {
-	        	users.clear();
-				for(NetUser netUser: communication.getNetUserList().userListToArray()) {
-					users.add(netUser.getName());
+        		users.clear();
+        		for(NetUser netUser: communication.getNetUserList().userListToArray()) {
+        			HashMap<String, String> userMap = new HashMap<String, String>();
+        			userMap.put(USERNAME, netUser.getName());
+        			userMap.put(IP, netUser.getIp().getHostAddress());
+					users.add(userMap);
 				}
-        	}
+				adapter.notifyDataSetChanged();
+			}
         }
     };
-    
 	
-	@SuppressWarnings("unchecked")
-	@Override
+	
+    
+    @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
@@ -51,20 +60,19 @@ public class UsersActivity extends Activity implements OnClickListener {
         this.userManagers = application.getUsersManager();
         this.communication = application.getCommunication();
         
-        
-        this.setContentView(R.layout.users);
-        
-        ListView userList = (ListView)findViewById(R.id.userList);
-        userList.setTextFilterEnabled(true);
-        this.users = (ArrayAdapter<String>) (this.getLastNonConfigurationInstance());
-        if (this.users == null) {
-        	this.users = new ArrayAdapter<String>(this, R.layout.list_item);
-        }
-        userList.setAdapter(this.users);
+        users = new ArrayList<HashMap<String, String>>();
+        this.adapter = new SimpleAdapter(
+					this,
+					users,
+					R.layout.list_two_info_per_item,
+					new String[] {USERNAME, IP},
+					new int[] {R.id.text_1, R.id.text_2});
+        this.setListAdapter(this.adapter);
         
         this.userManagers.setHandler(mHandler);
     }
 
+	
 	@Override
 	public void onBackPressed() {
 	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -76,7 +84,6 @@ public class UsersActivity extends Activity implements OnClickListener {
         AlertDialog alert = builder.create();
         alert.show();
 	}
-	
 	
 	public void onClick(DialogInterface dialog, int which) {
 		if (DialogInterface.BUTTON_POSITIVE == which) {
