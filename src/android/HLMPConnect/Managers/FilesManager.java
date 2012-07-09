@@ -1,7 +1,7 @@
 package android.HLMPConnect.Managers;
 
+import java.net.InetAddress;
 import java.util.Hashtable;
-import java.util.UUID;
 import android.os.Handler;
 import android.util.Log;
 
@@ -24,15 +24,15 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	protected Communication communication;
 	protected FileTransferProtocol fileTransferProtocol;
 	protected Handler communityFilesHandler;
-	protected Hashtable<UUID, FileInformationList> communityFiles;
+	protected Hashtable<InetAddress, FileInformationList> communityFiles;
 	
 	
 	public FilesManager() {
-		this.communityFiles = new Hashtable<UUID, FileInformationList>();
+		this.communityFiles = new Hashtable<InetAddress, FileInformationList>();
 	}
 	
 	
-	public Hashtable<UUID, FileInformationList> getCommunityFiles() {
+	public Hashtable<InetAddress, FileInformationList> getCommunityFiles() {
 		return communityFiles;
 	}
 	
@@ -63,6 +63,10 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		}
 	}
 	
+	public void sendFileRequest(NetUser netUser, FileInformation fileInformation) {
+		this.fileTransferProtocol.sendFileRequest(netUser, fileInformation);
+		
+	}
 	
 	// Implements HLMP RemoveUserEventObserverI
 	
@@ -77,7 +81,7 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	public synchronized void addFileList(NetUser netUser, FileInformationList fileList) {
 		if (fileList.toArray().length != 0) {
 			Log.d(MSG_TAG, "addFileList user:" + netUser.getName());
-			this.communityFiles.put(netUser.getId(), fileList);
+			this.communityFiles.put(netUser.getIp(), fileList);
 			if (this.communityFilesHandler != null) {
 				this.communityFilesHandler.obtainMessage(CommunityFilesActivity.UPDATE_USERS_LIST).sendToTarget();
 			}
@@ -86,7 +90,7 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 
 	public void removeFileList(NetUser netUser) {
 		Log.d(MSG_TAG, "removeFileList user:" + netUser.getName());
-		this.communityFiles.remove(netUser.getId());
+		this.communityFiles.remove(netUser.getIp());
 		if (this.communityFilesHandler != null) {
 			this.communityFilesHandler.obtainMessage(CommunityFilesActivity.UPDATE_USERS_LIST).sendToTarget();
 		}
@@ -143,5 +147,4 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	public void uploadFileFailed(String fileHandlerId) {
 		// TODO Auto-generated method stub
 	}
-
 }

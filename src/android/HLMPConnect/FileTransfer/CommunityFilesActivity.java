@@ -5,9 +5,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.ArrayAdapter;
+import android.view.View;
 import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.SimpleExpandableListAdapter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -25,18 +29,21 @@ import android.HLMPConnect.HLMPApplication;
 import android.HLMPConnect.Managers.FilesManager;
 
 
-public class CommunityFilesActivity extends ExpandableListActivity {
+public class CommunityFilesActivity extends ExpandableListActivity implements OnChildClickListener {
 
 	protected static final String MSG_TAG = "HLMP -> CommunityFilesActivity";
 	
 	private static final String NAME = "NAME";
 	private static final String SIZE = "SIZE";
+	private static final String USER_IP = "USER_IP";
+	private static final String ID = "ID";
+	
 	public static final int UPDATE_USERS_LIST =	0;
 	
 	private CommunityFilesActivity self;
 	private Communication communication;
 	private FilesManager filesManager;
-	private Hashtable<UUID, FileInformationList> communityFiles;
+	private Hashtable<InetAddress, FileInformationList> communityFiles;
 	private ExpandableListAdapter mAdapter;
 	private List<Map<String, String>> groupData;
 	private List<List<Map<String, String>>> childData; 
@@ -44,30 +51,34 @@ public class CommunityFilesActivity extends ExpandableListActivity {
 	
 	private final Handler communityFilesHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
+        public synchronized void handleMessage(Message msg) {
         	if (msg.what == UPDATE_USERS_LIST) {
+        		List<Map<String, String>> groupData_old = groupData;
+        		List<List<Map<String, String>>> childData_old = childData;
         		groupData = new ArrayList<Map<String, String>>();
                 childData = new ArrayList<List<Map<String, String>>>();
                 
-        		Set<UUID> userIds = communityFiles.keySet();
-        		for (UUID userId : userIds){
+        		Set<InetAddress> usersInetAddress = communityFiles.keySet();
+        		for (InetAddress userInetAddress : usersInetAddress) {
         			Map<String, String> curGroupMap = new HashMap<String, String>();
                     groupData.add(curGroupMap);
-                    String userName = "Unknown";
-                    for (NetUser netUser : communication.getNetUserList().userListToArray()) {
-                    	if (netUser.getId() == userId) {
-                    		userName = netUser.getName(); 
-                    		break;
-                    	}
+                    
+                    NetUser netUser = communication.getNetUserList().getUser(userInetAddress);
+                    if (netUser == null) {
+                    	groupData = groupData_old;
+                    	childData = childData_old;
+                    	return;
                     }
-                    curGroupMap.put(NAME, userName);
+                    curGroupMap.put(NAME, netUser.getName());
+                    curGroupMap.put(USER_IP, userInetAddress.getHostAddress());
                     
                     List<Map<String, String>> children = new ArrayList<Map<String, String>>();
-        			for (FileInformation fileInformationList : communityFiles.get(userId).toArray()) {
+        			for (FileInformation fileInformation : communityFiles.get(userInetAddress).toArray()) {
         				Map<String, String> curChildMap = new HashMap<String, String>();
                         children.add(curChildMap);
-                        curChildMap.put(NAME, fileInformationList.getName());
-                        curChildMap.put(SIZE, "" + fileInformationList.getSize()/1024 + " KB");
+                        curChildMap.put(NAME, fileInformation.getName());
+                        curChildMap.put(SIZE, "" + fileInformation.getSize()/1024 + " KB");
+                        curChildMap.put(ID, fileInformation.getId().toString());
         			}
         			childData.add(children);
         		}
@@ -76,14 +87,16 @@ public class CommunityFilesActivity extends ExpandableListActivity {
         				self,
         				groupData,
         				android.R.layout.simple_expandable_list_item_1,
-        				new String[] { NAME },
-        				new int[] { android.R.id.text1},
+        				new String[] { NAME, USER_IP },
+        				new int[] {android.R.id.text1, android.R.id.text2},
         				childData,
         				android.R.layout.simple_expandable_list_item_2,
-        				new String[] { NAME, SIZE },
-        				new int[] { android.R.id.text1, android.R.id.text2}
+        				new String[] { NAME, SIZE, ID },
+        				new int[] {android.R.id.text1, android.R.id.text2, android.R.id.addToDictionary}
         				);
         		self.setListAdapter(mAdapter);
+        		
+        		self.getExpandableListView().setOnChildClickListener(self);
         		
         		Log.d(MSG_TAG, "update users list");
         	}
@@ -103,5 +116,32 @@ public class CommunityFilesActivity extends ExpandableListActivity {
         this.communityFiles = filesManager.getCommunityFiles();
         this.filesManager.setCommunityFilesHandler(communityFilesHandler);
         this.self = this;
+    }
+	
+	@Override
+	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+		Map<String, String> usersMap = groupData.get(groupPosition);
+		Log.d(MSG_TAG, usersMap.get(NAME));
+		Log.d(MSG_TAG, usersMap.get(USER_IP));
+		
+		List<Map<String, String>> filesList = childData.get(groupPosition);
+		Map<String, String> fileMap = filesList.get(childPosition);
+		Log.d(MSG_TAG, fileMap.get(NAME));
+		
+		
+		UUID fileInformationId = UUID.fromString(fileMap.get(ID));
+		InetAddress userInetAddress;
+		try {
+			userInetAddress = InetAddress.getByName(usersMap.get(USER_IP));
+		} catch (UnknownHostException e) {
+			return false;
+		}
+		
+		NetUser netUser = communication.getNetUserList().getUser(userInetAddress);
+		FileInformationList fileInformationlist = communityFiles.get(userInetAddress);
+		FileInformation fileInformation = fileInformationlist.getFileInformation(fileInformationId);
+		this.filesManager.sendFileRequest(netUser, fileInformation);
+		
+		return true;
     }
 }

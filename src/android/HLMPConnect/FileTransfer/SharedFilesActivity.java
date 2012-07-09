@@ -27,6 +27,7 @@ public class SharedFilesActivity extends Activity implements OnClickListener {
 	private Button addFile;
 	private FilesManager fileManager;
 
+	//TODO: agregar la lista local de archivos compartidos
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
