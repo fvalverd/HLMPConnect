@@ -72,6 +72,10 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name="android.HLMPConnect.FileTransfer.DownloadFilesActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name="android.HLMPConnect.FileTransfer.TransferStateFilesActivity"
             android:label="@string/app_name" >
         </activity>

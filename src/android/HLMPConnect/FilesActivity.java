@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.widget.TabHost;
 
 import android.HLMPConnect.FileTransfer.CommunityFilesActivity;
+import android.HLMPConnect.FileTransfer.DownloadFilesActivity;
 import android.HLMPConnect.FileTransfer.SharedFilesActivity;
 import android.HLMPConnect.FileTransfer.TransferStateFilesActivity;
 import android.HLMPConnect.Managers.FilesManager;
@@ -17,7 +18,7 @@ import android.HLMPConnect.Managers.FilesManager;
 public class FilesActivity extends TabActivity implements OnClickListener {
 	
 	public static final String DOWNLOAD_DIR_NAME_SUFIX = "downloads";
-	public static final String SHARED_DIR_NAME_SUFIX = "downloads";
+	public static final String SHARED_DIR_NAME_SUFIX = "shared";
 	
 	protected FilesManager filesManager;
 	private TabHost tabHost;
@@ -40,6 +41,12 @@ public class FilesActivity extends TabActivity implements OnClickListener {
 
 	    intent = new Intent().setClass(this, CommunityFilesActivity.class);
 	    spec = this.tabHost.newTabSpec("community").setIndicator("Community"
+//	                      ,res.getDrawable(R.drawable.ic_tab_community)
+	    		).setContent(intent);
+	    this.tabHost.addTab(spec);
+	    
+	    intent = new Intent().setClass(this, DownloadFilesActivity.class);
+	    spec = this.tabHost.newTabSpec("downloads").setIndicator("Downloads"
 //	                      ,res.getDrawable(R.drawable.ic_tab_community)
 	    		).setContent(intent);
 	    this.tabHost.addTab(spec);

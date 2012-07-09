@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.util.Hashtable;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import hlmp.CommLayer.Communication;
 import hlmp.CommLayer.NetUser;
@@ -15,6 +16,7 @@ import hlmp.SubProtocol.FileTransfer.ControlI.FileHandlerI;
 import hlmp.SubProtocol.FileTransfer.ControlI.FileListHandlerI;
 
 import android.HLMPConnect.FileTransfer.CommunityFilesActivity;
+import android.HLMPConnect.FileTransfer.DownloadFilesActivity;
 
 
 public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserEventObserverI {
@@ -24,7 +26,9 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	protected Communication communication;
 	protected FileTransferProtocol fileTransferProtocol;
 	protected Handler communityFilesHandler;
+	protected Handler downloadFilesHandler;
 	protected Hashtable<InetAddress, FileInformationList> communityFiles;
+	protected Toast toast;
 	
 	
 	public FilesManager() {
@@ -38,6 +42,10 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	
 	public void setCommunityFilesHandler(Handler communityFilesHandler) {
 		this.communityFilesHandler = communityFilesHandler;
+	}
+	
+	public void setDownloadFilesHandler(Handler downloadFilesHandler) {
+		this.downloadFilesHandler = downloadFilesHandler;
 	}
 
 	public void setFileTranfersProtocol(FileTransferProtocol fileTransferProtocol) {
@@ -65,10 +73,9 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	
 	public void sendFileRequest(NetUser netUser, FileInformation fileInformation) {
 		this.fileTransferProtocol.sendFileRequest(netUser, fileInformation);
-		
 	}
-	
-	// Implements HLMP RemoveUserEventObserverI
+
+	//	// Implements HLMP RemoveUserEventObserverI
 	
 	public void removeUserEventUpdate(NetUser netUser) {
 		this.removeFileList(netUser);
@@ -99,6 +106,8 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	
 	// Implements HLMP FiletHandler
 	
+	//	// Download
+	
 	public void downloadFileQueued(NetUser netUser, String fileHandlerId, String fileName) {
 		// TODO Auto-generated method stub
 		
@@ -115,8 +124,9 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 	public void downloadFileComplete(String fileHandlerId, String path) {
-		// TODO Auto-generated method stub
-		
+		if (this.downloadFilesHandler != null) {
+			this.downloadFilesHandler.obtainMessage(DownloadFilesActivity.UPDATE_USERS_LIST).sendToTarget();
+		}
 	}
 
 	public void downloadFileFailed(String fileHandlerId) {
@@ -124,6 +134,8 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		
 	}
 
+	//	// Upload
+	
 	public void uploadFileQueued(NetUser netUser, String fileHandlerId, String fileName) {
 		// TODO Auto-generated method stub
 		
