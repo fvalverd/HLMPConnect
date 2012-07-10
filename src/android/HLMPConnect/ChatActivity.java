@@ -10,35 +10,50 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.HLMPConnect.Managers.ChatManager;
+
 
 public class ChatActivity extends Activity implements OnKeyListener, android.content.DialogInterface.OnClickListener, android.view.View.OnClickListener {
 	
 	public static final int GLOBAL_MESSAGE = 0;
+	
+	private static final String USERNAME	= "USERNAME";
+	private static final String MESSAGE		= "MESSAGE";
+	
 	protected ChatManager chatManager;
 	protected EditText message;
 	protected Button send;
-	protected ArrayAdapter<String> messages;	
+	protected ArrayList<HashMap<String, String>> messages;
+	protected SimpleAdapter adapter;
 	
 	private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
         	switch (msg.what) {
-	            case GLOBAL_MESSAGE: {
-		        	String incomingMessage = (String) msg.obj;
-		        	messages.add(incomingMessage);
+	        	case GLOBAL_MESSAGE: {
+		        	String[] message_data = (String[]) msg.obj;
+		        	String userName = message_data[0]; 
+		        	String messageText = message_data[1];
+		        	
+		        	HashMap<String, String> messageMap = new HashMap<String, String>();
+		        	messageMap.put(USERNAME, userName);
+		        	messageMap.put(MESSAGE, messageText);
+		        	messages.add(messageMap);
+		        	
+		        	adapter.notifyDataSetChanged();
 	            }
         	}
         }
     };
+	
 
-    
-    @SuppressWarnings("unchecked")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,25 +66,22 @@ public class ChatActivity extends Activity implements OnKeyListener, android.con
         
         this.send = (Button)findViewById(R.id.send);
         this.send.setOnClickListener(this);
-        
-        ListView msgList = (ListView)findViewById(R.id.msgList);
-        msgList.setTextFilterEnabled(true);
-        this.messages = (ArrayAdapter<String>) (this.getLastNonConfigurationInstance());
-        if (this.messages == null) {
-        	this.messages = new ArrayAdapter<String>(this, R.layout.list_item);
-        }
-        msgList.setAdapter(this.messages);
-        this.chatManager.setMessageArrayAdapter(this.messages);
-        
         this.message = (EditText)findViewById(R.id.msg);
         this.message.setOnKeyListener(this);
         
+        
+        this.messages = new ArrayList<HashMap<String, String>>();
+        this.adapter = new SimpleAdapter( 
+                this, 
+                this.messages,
+                R.layout.list_two_info_per_item,
+                new String[] {USERNAME, MESSAGE},
+                new int[] {R.id.text_1, R.id.text_2});
+        ListView msgListView = (ListView)findViewById(R.id.msgList);
+        msgListView.setAdapter(this.adapter);
+        
+        
         this.chatManager.setHandler(mHandler);
-    }
-     
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        return this.messages;
     }
     
     @Override

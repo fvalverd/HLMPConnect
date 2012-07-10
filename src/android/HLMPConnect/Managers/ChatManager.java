@@ -2,7 +2,6 @@ package android.HLMPConnect.Managers;
 
 import android.HLMPConnect.ChatActivity;
 import android.os.Handler;
-import android.widget.ArrayAdapter;
 
 import hlmp.CommLayer.NetUser;
 import hlmp.SubProtocol.Chat.ChatProtocol;
@@ -12,7 +11,6 @@ import hlmp.SubProtocol.Chat.Messages.GroupChatMessage;
 public class ChatManager implements ChatHandlerI {
 
 	protected Handler mHandler;
-	protected ArrayAdapter<String> messages;
 	protected ChatProtocol chatProtocol;
 	protected NetUser netUser;
 
@@ -34,15 +32,10 @@ public class ChatManager implements ChatHandlerI {
 	}
 
 	public void showMessage(NetUser netUser, String message) {
-		String message_format = "[ %s ]: %s";
-		message_format = String.format(message_format, netUser.getName(), message);
 		if (this.mHandler != null ) {
-			this.mHandler.obtainMessage(ChatActivity.GLOBAL_MESSAGE, message_format).sendToTarget();
+			this.mHandler.obtainMessage(ChatActivity.GLOBAL_MESSAGE,
+					new String[] {netUser.getName(), message}).sendToTarget();
 		}
-	}
-
-	public void setMessageArrayAdapter(ArrayAdapter<String> messages) {
-		this.messages = messages;
 	}
 
 	public void sendMessage(String text) {
