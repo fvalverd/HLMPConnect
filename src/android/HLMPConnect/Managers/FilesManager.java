@@ -163,8 +163,17 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	//	// Upload
 	
 	public void uploadFileQueued(NetUser netUser, String fileHandlerId, String fileName) {
-		// TODO: Agregar a la lista de estados que se comparte un archivo
-		
+		String size = null;
+		for (FileInformation fileInformation : fileTransferProtocol.getFileData().getFileList().toArray()) {
+			if (fileInformation.getName() == fileName) {
+				size = "" + fileInformation.getSize();
+			}
+		}
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.ADD_UPLOAD,
+					new String[] {fileHandlerId, fileName, size}).sendToTarget();
+		}
 	}
 
 	public void uploadFileOpened(String fileHandlerId) {
@@ -183,8 +192,13 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 	public void uploadFileComplete(String fileHandlerId) {
-		// TODO: Agregar el progress 100 para el archivo que se termino se subir
-		
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.UPDATE_UPLOAD_PERCENT,
+					100,
+					0,
+					fileHandlerId).sendToTarget();
+		}
 	}
 
 	public void uploadFileFailed(String fileHandlerId) {
