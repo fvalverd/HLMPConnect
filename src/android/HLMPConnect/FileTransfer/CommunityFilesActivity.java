@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -17,7 +18,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import hlmp.CommLayer.Communication;
@@ -39,66 +39,45 @@ public class CommunityFilesActivity extends ExpandableListActivity implements On
 	private static final String ID = "ID";
 	
 	public static final int UPDATE_USERS_LIST =	0;
-	
-	private CommunityFilesActivity self;
+
 	private Communication communication;
 	private FilesManager filesManager;
 	private Hashtable<InetAddress, FileInformationList> communityFiles;
-	private ExpandableListAdapter mAdapter;
-	private List<Map<String, String>> groupData;
-	private List<List<Map<String, String>>> childData; 
+	private ExpandableListAdapter adapter;
+	private List<Map<String, String>> users;
+	private List<List<Map<String, String>>> files; 
 	
 	
 	private final Handler communityFilesHandler = new Handler() {
         @Override
         public synchronized void handleMessage(Message msg) {
         	if (msg.what == UPDATE_USERS_LIST) {
-        		List<Map<String, String>> groupData_old = groupData;
-        		List<List<Map<String, String>>> childData_old = childData;
-        		groupData = new ArrayList<Map<String, String>>();
-                childData = new ArrayList<List<Map<String, String>>>();
+        		Log.d(MSG_TAG, "update users list");
+        		users.clear();
+                files.clear();
                 
-        		Set<InetAddress> usersInetAddress = communityFiles.keySet();
-        		for (InetAddress userInetAddress : usersInetAddress) {
-        			Map<String, String> curGroupMap = new HashMap<String, String>();
-                    groupData.add(curGroupMap);
+        		for (InetAddress userInetAddress : communityFiles.keySet()) {
+        			Map<String, String> usersMap = new HashMap<String, String>();
+                    users.add(usersMap);
                     
                     NetUser netUser = communication.getNetUserList().getUser(userInetAddress);
                     if (netUser == null) {
-                    	groupData = groupData_old;
-                    	childData = childData_old;
-                    	return;
+                    	continue;
                     }
-                    curGroupMap.put(NAME, netUser.getName());
-                    curGroupMap.put(USER_IP, userInetAddress.getHostAddress());
+                    usersMap.put(NAME, netUser.getName());
+                    usersMap.put(USER_IP, userInetAddress.getHostAddress());
                     
-                    List<Map<String, String>> children = new ArrayList<Map<String, String>>();
+                    List<Map<String, String>> userFilesMap = new ArrayList<Map<String, String>>();
         			for (FileInformation fileInformation : communityFiles.get(userInetAddress).toArray()) {
-        				Map<String, String> curChildMap = new HashMap<String, String>();
-                        children.add(curChildMap);
-                        curChildMap.put(NAME, fileInformation.getName());
-                        curChildMap.put(SIZE, "" + fileInformation.getSize()/1024 + " KB");
-                        curChildMap.put(ID, fileInformation.getId().toString());
+        				Map<String, String> fileMap = new HashMap<String, String>();
+                        userFilesMap.add(fileMap);
+                        fileMap.put(NAME, fileInformation.getName());
+                        fileMap.put(SIZE, "" + fileInformation.getSize()/1024 + " KB");
+                        fileMap.put(ID, fileInformation.getId().toString());
         			}
-        			childData.add(children);
+        			files.add(userFilesMap);
         		}
-        		
-        		mAdapter = new SimpleExpandableListAdapter(
-        				self,
-        				groupData,
-        				android.R.layout.simple_expandable_list_item_1,
-        				new String[] { NAME, USER_IP },
-        				new int[] {android.R.id.text1, android.R.id.text2},
-        				childData,
-        				android.R.layout.simple_expandable_list_item_2,
-        				new String[] { NAME, SIZE, ID },
-        				new int[] {android.R.id.text1, android.R.id.text2, android.R.id.addToDictionary}
-        				);
-        		self.setListAdapter(mAdapter);
-        		
-        		self.getExpandableListView().setOnChildClickListener(self);
-        		
-        		Log.d(MSG_TAG, "update users list");
+        		((BaseExpandableListAdapter) adapter).notifyDataSetChanged();
         	}
         }
     };
@@ -115,16 +94,31 @@ public class CommunityFilesActivity extends ExpandableListActivity implements On
         this.filesManager = application.getFilesManager();
         this.communityFiles = filesManager.getCommunityFiles();
         this.filesManager.setCommunityFilesHandler(communityFilesHandler);
-        this.self = this;
+        
+        this.users = new ArrayList<Map<String, String>>();
+        this.files = new ArrayList<List<Map<String, String>>>();
+        
+        this.adapter = new SimpleExpandableListAdapter(
+				this,
+				this.users,
+				android.R.layout.simple_expandable_list_item_1,
+				new String[] { NAME, USER_IP },
+				new int[] {android.R.id.text1, android.R.id.text2},
+				files,
+				android.R.layout.simple_expandable_list_item_2,
+				new String[] { NAME, SIZE, ID },
+				new int[] {android.R.id.text1, android.R.id.text2, android.R.id.addToDictionary});
+		this.setListAdapter(adapter);
+		this.getExpandableListView().setOnChildClickListener(this);
     }
 	
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-		Map<String, String> usersMap = groupData.get(groupPosition);
+		Map<String, String> usersMap = users.get(groupPosition);
 		Log.d(MSG_TAG, usersMap.get(NAME));
 		Log.d(MSG_TAG, usersMap.get(USER_IP));
 		
-		List<Map<String, String>> filesList = childData.get(groupPosition);
+		List<Map<String, String>> filesList = files.get(groupPosition);
 		Map<String, String> fileMap = filesList.get(childPosition);
 		Log.d(MSG_TAG, fileMap.get(NAME));
 		
