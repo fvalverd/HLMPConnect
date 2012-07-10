@@ -118,6 +118,12 @@ public class CommunityFilesActivity extends ExpandableListActivity implements On
     }
 	
 	@Override
+	protected void onRestart() {
+		communityFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
+		super.onRestart();
+	}
+	
+	@Override
 	public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 		Map<String, String> usersMap = users.get(groupPosition);
 		Log.d(MSG_TAG, usersMap.get(NAME));

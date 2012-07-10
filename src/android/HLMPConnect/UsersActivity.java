@@ -72,6 +72,11 @@ public class UsersActivity extends ListActivity implements OnClickListener {
         this.userManagers.setHandler(mHandler);
     }
 
+    @Override
+	protected void onRestart() {
+    	mHandler.obtainMessage(REFRESH_USER).sendToTarget();
+		super.onRestart();
+	}
 	
 	@Override
 	public void onBackPressed() {

@@ -180,16 +180,14 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 			this.stateFilesHandler.obtainMessage(StateFilesActivity.ADD_DOWNLOAD).sendToTarget();
 		}
 		
-		long now = System.currentTimeMillis();
 		Hashtable<String, Long> fileMap = new Hashtable<String, Long>();
-		fileMap.put(START, Long.valueOf(now));
 		fileMap.put(SIZE, Long.valueOf(size));
 		this.downloadTimes.put(fileHandlerId, fileMap);
 	}
 
 	public void downloadFileOpened(String fileHandlerId) {
-		// TODO Auto-generated method stub
-		
+		long now = System.currentTimeMillis();
+		this.downloadTimes.get(fileHandlerId).put(START, Long.valueOf(now));
 	}
 
 	public void downloadFileTransfer(String fileHandlerId, int percent) {
