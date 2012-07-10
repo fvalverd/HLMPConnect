@@ -75,6 +75,12 @@ public class ConnectionActivity extends OnOffActivity implements OnClickListener
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 		final HLMPApplication application = (HLMPApplication)getApplicationContext();
 		final View layout = inflater.inflate(R.layout.connection, (ViewGroup) findViewById(R.id.layout_root));
+		EditText username_input = (EditText) layout.findViewById(R.id.username_input);
+		
+		String username = android.os.Build.MODEL + "_" + android.os.Build.SERIAL;
+		username = username.replaceAll("\\s","");
+		username_input.setText(username);
+		
 		builder.setView(layout)
 		.setPositiveButton("Connect", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
