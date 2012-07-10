@@ -16,6 +16,7 @@ import hlmp.SubProtocol.FileTransfer.ControlI.FileHandlerI;
 import hlmp.SubProtocol.FileTransfer.ControlI.FileListHandlerI;
 
 import android.HLMPConnect.FilesActivity;
+import android.HLMPConnect.HLMPApplication;
 import android.HLMPConnect.FileTransfer.CommunityFilesActivity;
 import android.HLMPConnect.FileTransfer.DownloadFilesActivity;
 import android.HLMPConnect.FileTransfer.StateFilesActivity;
@@ -24,6 +25,10 @@ import android.HLMPConnect.FileTransfer.StateFilesActivity;
 public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserEventObserverI {
 
 	private static final String MSG_TAG = "HLMP -> FilesManager";
+
+	private static final String START	= "START";
+	private static final String END		= "END";
+	private static final String SIZE	= "SIZE";
 	
 	protected Communication communication;
 	protected FileTransferProtocol fileTransferProtocol;
@@ -33,13 +38,17 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	protected Hashtable<InetAddress, FileInformationList> communityFiles;
 	protected Toast toast;
 	protected FilesActivity filesActivity;
+	protected Hashtable<String, Hashtable<String, Long>> downloadTimes;
+	private HLMPApplication application;
 	
 	
-	public FilesManager() {
+	public FilesManager(HLMPApplication application) {
+		this.application = application;
 		this.communityFiles = new Hashtable<InetAddress, FileInformationList>();
+		this.downloadTimes = new Hashtable<String, Hashtable<String, Long>>();
 	}
-	
-	
+
+
 	public Hashtable<InetAddress, FileInformationList> getCommunityFiles() {
 		return communityFiles;
 	}
@@ -73,6 +82,12 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 
+	private void writeTrafficStats(String fileHandlerId) {
+		Hashtable<String, Long> fileMap = this.downloadTimes.get(fileHandlerId);
+		double seconds = (fileMap.get(END)- fileMap.get(START))/1000.0;
+		double size_kb = fileMap.get(SIZE)/1024.0;
+		this.application.saveTimeRecord(seconds, size_kb);
+	}
 	
 	// FileTransferProtocol Manager API
 	
@@ -136,6 +151,11 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 					StateFilesActivity.ADD_DOWNLOAD,
 					new String[] {fileHandlerId, fileName, size}).sendToTarget();
 		}
+		long now = System.currentTimeMillis();
+		Hashtable<String, Long> fileMap = new Hashtable<String, Long>();
+		fileMap.put(START, Long.valueOf(now));
+		fileMap.put(SIZE, Long.valueOf(size));
+		this.downloadTimes.put(fileHandlerId, fileMap);
 	}
 
 	public void downloadFileOpened(String fileHandlerId) {
@@ -154,9 +174,14 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 	public void downloadFileComplete(String fileHandlerId, String path) {
+		long now = System.currentTimeMillis();
+		this.downloadTimes.get(fileHandlerId).put(END, Long.valueOf(now));
+		this.writeTrafficStats(fileHandlerId);
+		
 		if (this.downloadFilesHandler != null) {
 			this.downloadFilesHandler.obtainMessage(DownloadFilesActivity.UPDATE_USERS_LIST).sendToTarget();
 		}
+		
 		if (this.stateFilesHandler != null) {
 			this.stateFilesHandler.obtainMessage(
 					StateFilesActivity.UPDATE_DOWNLOAD_PERCENT,

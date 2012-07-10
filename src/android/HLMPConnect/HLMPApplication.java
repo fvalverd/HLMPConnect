@@ -1,6 +1,9 @@
 package android.HLMPConnect;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import android.os.Handler;
@@ -139,7 +142,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		
 		this.usersManager = new UsersManager();
 		if (this.filesManager == null) {
-			this.filesManager = new FilesManager();
+			this.filesManager = new FilesManager(this);
 		}
 		if (this.chatManager == null) {
 			this.chatManager = new ChatManager();
@@ -331,4 +334,22 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	}
 
 	
+	public void saveTimeRecord(double seconds, double size_kb) {
+		String results = "" + size_kb + " " + seconds + " " + size_kb/seconds + "\n";
+		FileOutputStream download_time_stream = null;
+		try {
+			download_time_stream = openFileOutput(FilesActivity.DOWNLOAD_TIMES_FILENAME, MODE_APPEND);
+			download_time_stream.write(results.getBytes());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (download_time_stream != null) {
+				try {
+					download_time_stream.close();
+				} catch (IOException e) {}
+			}
+		}
+	}
 }

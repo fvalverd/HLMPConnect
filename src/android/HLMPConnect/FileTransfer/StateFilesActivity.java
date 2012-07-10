@@ -96,11 +96,12 @@ public class StateFilesActivity extends ListActivity {
         
         HLMPApplication application = (HLMPApplication)getApplicationContext();
     	this.fileManager = application.getFilesManager();
-    	this.fileManager.setStateFilesHandler(this.stateFilesHandler);
-
+    	
     	files = new HashMap<String, HashMap<String, String>>();
         adapterFiles = new ArrayList<HashMap<String, String>>();
-        
+    	
+    	this.fileManager.setStateFilesHandler(this.stateFilesHandler);
+    	
         this.adapter = new SimpleAdapter(
 					this,
 					adapterFiles,
