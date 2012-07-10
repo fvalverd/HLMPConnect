@@ -144,6 +144,9 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		if (this.filesManager == null) {
 			this.filesManager = new FilesManager(this);
 		}
+		else {
+			this.filesManager.clearData();
+		}
 		if (this.chatManager == null) {
 			this.chatManager = new ChatManager();
 		}

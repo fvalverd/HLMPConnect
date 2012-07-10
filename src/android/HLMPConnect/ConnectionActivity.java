@@ -79,6 +79,7 @@ public class ConnectionActivity extends OnOffActivity implements OnClickListener
 		
 		String username = "";
 		username = android.os.Build.MODEL + "_" + android.os.Build.SERIAL; // from API 9
+//		username = android.os.Build.MODEL; // API 7
 		username = username.replaceAll("\\s","");
 		username_input.setText(username);
 		

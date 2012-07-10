@@ -112,6 +112,11 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		this.stateFiles.put(fileHandlerId, fileMap);
 	}
 	
+	public void clearData() {
+		communityFiles.clear();
+		stateFiles.clear();
+		downloadTimes.clear();
+	}
 	// FileTransferProtocol Manager API
 	
 	public void addFileInformationToFileData(FileInformation fileInformation) {
@@ -262,4 +267,6 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	public void uploadFileFailed(String fileHandlerId) {
 		// TODO: Notificar en la lista de estados que no se puede seguir subiendo
 	}
+
+
 }
