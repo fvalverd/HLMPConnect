@@ -77,7 +77,8 @@ public class ConnectionActivity extends OnOffActivity implements OnClickListener
 		final View layout = inflater.inflate(R.layout.connection, (ViewGroup) findViewById(R.id.layout_root));
 		EditText username_input = (EditText) layout.findViewById(R.id.username_input);
 		
-		String username = android.os.Build.MODEL + "_" + android.os.Build.SERIAL;
+		String username = "";
+		username = android.os.Build.MODEL + "_" + android.os.Build.SERIAL; // from API 9
 		username = username.replaceAll("\\s","");
 		username_input.setText(username);
 		
