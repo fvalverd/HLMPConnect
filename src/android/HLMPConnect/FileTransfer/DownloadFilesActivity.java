@@ -1,14 +1,22 @@
 package android.HLMPConnect.FileTransfer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import android.HLMPConnect.FilesActivity;
 import android.HLMPConnect.HLMPApplication;
@@ -16,7 +24,7 @@ import android.HLMPConnect.Managers.FilesManager;
 import android.HLMPConnect.R;
 
 
-public class DownloadFilesActivity extends ListActivity {
+public class DownloadFilesActivity extends ListActivity implements OnItemClickListener {
 	
 	private static final String MSG_TAG = "HLMP -> DownloadFilesActivity";
 
@@ -73,5 +81,37 @@ public class DownloadFilesActivity extends ListActivity {
 					new String[] {FILENAME, SIZE},
 					new int[] {R.id.text_1, R.id.text_2});
         this.setListAdapter(this.adapter);
+        this.getListView().setOnItemClickListener(this);
     }
+
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+		final String fileName = files.get(position).get(FILENAME);
+		final File downloadDir = getDir(FilesActivity.DOWNLOAD_DIR_NAME_SUFIX, MODE_WORLD_READABLE);
+		final File file = new File(downloadDir, fileName);
+		final FilesActivity filesActivity = fileManager.getFilesActivity();
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(filesActivity);
+	    builder.setMessage("Are you sure you want to delete " + fileName + " ?")
+        .setCancelable(false)
+        .setPositiveButton("Delete", new OnClickListener() {
+			
+        	public void onClick(DialogInterface dialog, int arg1) {
+        		try {
+        			if (file.getCanonicalFile().delete()) {
+        				downloadFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
+        				Toast.makeText(filesActivity, fileName + " was deleted !", Toast.LENGTH_SHORT).show();
+        			}
+        		} catch (IOException e) {
+        			File file_tmp = new File(downloadDir, fileName);
+        			if (!file_tmp.exists()) {
+        				downloadFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
+        			}
+        		}
+			}
+		})
+        .setNegativeButton("Cancel", null);
+
+        AlertDialog alert = builder.create();
+        alert.show();
+	}
 }

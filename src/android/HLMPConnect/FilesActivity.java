@@ -60,6 +60,7 @@ public class FilesActivity extends TabActivity implements OnClickListener {
         HLMPApplication application = (HLMPApplication)getApplicationContext();
         
         this.filesManager = application.getFilesManager();
+        this.filesManager.setFilesActivity(this);
     }
     
     @Override

@@ -15,6 +15,7 @@ import hlmp.SubProtocol.FileTransfer.FileTransferProtocol;
 import hlmp.SubProtocol.FileTransfer.ControlI.FileHandlerI;
 import hlmp.SubProtocol.FileTransfer.ControlI.FileListHandlerI;
 
+import android.HLMPConnect.FilesActivity;
 import android.HLMPConnect.FileTransfer.CommunityFilesActivity;
 import android.HLMPConnect.FileTransfer.DownloadFilesActivity;
 import android.HLMPConnect.FileTransfer.StateFilesActivity;
@@ -31,6 +32,7 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	protected Handler stateFilesHandler;
 	protected Hashtable<InetAddress, FileInformationList> communityFiles;
 	protected Toast toast;
+	protected FilesActivity filesActivity;
 	
 	
 	public FilesManager() {
@@ -40,6 +42,10 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	
 	public Hashtable<InetAddress, FileInformationList> getCommunityFiles() {
 		return communityFiles;
+	}
+
+	public FilesActivity getFilesActivity() {
+		return this.filesActivity;
 	}
 	
 	public void setCommunityFilesHandler(Handler communityFilesHandler) {
@@ -62,7 +68,11 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		this.communication = communication;
 	}
 	
-	
+	public void setFilesActivity(FilesActivity filesActivity) {
+		this.filesActivity = filesActivity;
+	}
+
+
 	
 	// FileTransferProtocol Manager API
 	
