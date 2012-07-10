@@ -1,6 +1,9 @@
 package android.HLMPConnect.FileTransfer;
 
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +12,7 @@ import android.view.View;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.SimpleExpandableListAdapter;
 import java.net.InetAddress;
@@ -25,6 +29,7 @@ import hlmp.CommLayer.NetUser;
 import hlmp.SubProtocol.FileTransfer.FileInformation;
 import hlmp.SubProtocol.FileTransfer.FileInformationList;
 
+import android.HLMPConnect.FilesActivity;
 import android.HLMPConnect.HLMPApplication;
 import android.HLMPConnect.Managers.FilesManager;
 
@@ -131,11 +136,26 @@ public class CommunityFilesActivity extends ExpandableListActivity implements On
 			return false;
 		}
 		
-		NetUser netUser = communication.getNetUserList().getUser(userInetAddress);
+		final FilesActivity filesActivity = this.filesManager.getFilesActivity();
+		final NetUser netUser = communication.getNetUserList().getUser(userInetAddress);
 		FileInformationList fileInformationlist = communityFiles.get(userInetAddress);
-		FileInformation fileInformation = fileInformationlist.getFileInformation(fileInformationId);
-		this.filesManager.sendFileRequest(netUser, fileInformation);
+		final FileInformation fileInformation = fileInformationlist.getFileInformation(fileInformationId);
+		final FilesManager filesManager_final = this.filesManager;
 		
-		return true;
+		AlertDialog.Builder builder = new AlertDialog.Builder(filesActivity);
+	    builder.setMessage("Are you sure you want to download " + fileInformation.getName() + " ?")
+        .setCancelable(false)
+        .setPositiveButton("Download", new OnClickListener() {
+			public void onClick(DialogInterface dialog, int arg1) {
+        		filesManager_final.sendFileRequest(netUser, fileInformation);
+        		Toast.makeText(filesActivity, "Downloading " + fileInformation.getName(), Toast.LENGTH_SHORT).show();
+			}
+		})
+        .setNegativeButton("Cancel", null);
+	    
+	    AlertDialog alert = builder.create();
+        alert.show();
+		
+	    return true;
     }
 }
