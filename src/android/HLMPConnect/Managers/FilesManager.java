@@ -1,10 +1,10 @@
 package android.HLMPConnect.Managers;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.Hashtable;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import hlmp.CommLayer.Communication;
 import hlmp.CommLayer.NetUser;
@@ -36,15 +36,17 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	protected Handler downloadFilesHandler;
 	protected Handler stateFilesHandler;
 	protected Hashtable<InetAddress, FileInformationList> communityFiles;
-	protected Toast toast;
-	protected FilesActivity filesActivity;
+	protected HashMap<String, HashMap<String, String>> stateFiles;
 	protected Hashtable<String, Hashtable<String, Long>> downloadTimes;
-	private HLMPApplication application;
+	protected FilesActivity filesActivity;
+	protected HLMPApplication application;
+
 	
 	
 	public FilesManager(HLMPApplication application) {
 		this.application = application;
 		this.communityFiles = new Hashtable<InetAddress, FileInformationList>();
+		this.stateFiles = new HashMap<String, HashMap<String, String>>();
 		this.downloadTimes = new Hashtable<String, Hashtable<String, Long>>();
 	}
 
@@ -53,6 +55,10 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		return communityFiles;
 	}
 
+	public HashMap<String, HashMap<String, String>> getStateFiles() {
+		return this.stateFiles;
+	}
+	
 	public FilesActivity getFilesActivity() {
 		return this.filesActivity;
 	}
@@ -87,6 +93,23 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		double seconds = (fileMap.get(END)- fileMap.get(START))/1000.0;
 		double size_kb = fileMap.get(SIZE)/1024.0;
 		this.application.saveTimeRecord(seconds, size_kb);
+	}
+	
+	private void addFileToStateFiles(String fileHandlerId, String fileName, String size) {
+		long size_long = 0;
+		if (size != null) {
+			size_long = Long.valueOf(size).longValue();
+		}
+		size = "" + size_long/1024 + " KB";
+		String progress = "0";
+		
+		HashMap<String, String> fileMap = new HashMap<String, String>();
+		fileMap.put(StateFilesActivity.ID, fileHandlerId);
+		fileMap.put(StateFilesActivity.FILENAME, fileName);
+		fileMap.put(StateFilesActivity.SIZE, size);
+		fileMap.put(StateFilesActivity.PROGRESS, progress);
+		
+		this.stateFiles.put(fileHandlerId, fileMap);
 	}
 	
 	// FileTransferProtocol Manager API
@@ -146,11 +169,12 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 				size = "" + fileInformation.getSize();
 			}
 		}
+		
+		this.addFileToStateFiles(fileHandlerId, "(DOWNLOAD) " + fileName, size);
 		if (this.stateFilesHandler != null) {
-			this.stateFilesHandler.obtainMessage(
-					StateFilesActivity.ADD_DOWNLOAD,
-					new String[] {fileHandlerId, fileName, size}).sendToTarget();
+			this.stateFilesHandler.obtainMessage(StateFilesActivity.ADD_DOWNLOAD).sendToTarget();
 		}
+		
 		long now = System.currentTimeMillis();
 		Hashtable<String, Long> fileMap = new Hashtable<String, Long>();
 		fileMap.put(START, Long.valueOf(now));
@@ -204,10 +228,9 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 				size = "" + fileInformation.getSize();
 			}
 		}
+		this.addFileToStateFiles(fileHandlerId, "(TRANSFER) " + fileName, size);
 		if (this.stateFilesHandler != null) {
-			this.stateFilesHandler.obtainMessage(
-					StateFilesActivity.ADD_UPLOAD,
-					new String[] {fileHandlerId, fileName, size}).sendToTarget();
+			this.stateFilesHandler.obtainMessage(StateFilesActivity.ADD_UPLOAD).sendToTarget();
 		}
 	}
 
