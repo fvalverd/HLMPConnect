@@ -24,13 +24,13 @@ public class ChatActivity extends Activity implements OnKeyListener, android.con
 	
 	public static final int GLOBAL_MESSAGE = 0;
 	
-	private static final String USERNAME	= "USERNAME";
-	private static final String MESSAGE		= "MESSAGE";
+	public static final String USERNAME	= "USERNAME";
+	public static final String MESSAGE		= "MESSAGE";
 	
 	protected ChatManager chatManager;
 	protected EditText message;
 	protected Button send;
-	protected ArrayList<HashMap<String, String>> messages;
+	protected ArrayList<HashMap<String, String>> globalMessages;
 	protected SimpleAdapter adapter;
 	
 	private final Handler mHandler = new Handler() {
@@ -38,18 +38,10 @@ public class ChatActivity extends Activity implements OnKeyListener, android.con
         public void handleMessage(Message msg) {
         	switch (msg.what) {
 	        	case GLOBAL_MESSAGE: {
-		        	String[] message_data = (String[]) msg.obj;
-		        	String userName = message_data[0]; 
-		        	String messageText = message_data[1];
-		        	
-		        	HashMap<String, String> messageMap = new HashMap<String, String>();
-		        	messageMap.put(USERNAME, userName);
-		        	messageMap.put(MESSAGE, messageText);
-		        	messages.add(messageMap);
-		        	
-		        	adapter.notifyDataSetChanged();
-	            }
+	        		adapter.notifyDataSetChanged();
+		        }
         	}
+        	
         }
     };
 	
@@ -60,6 +52,7 @@ public class ChatActivity extends Activity implements OnKeyListener, android.con
         
         HLMPApplication application = (HLMPApplication)getApplicationContext();
         this.chatManager = application.getChatManager();
+        this.globalMessages = this.chatManager.getGlobalMessages(); 
         
         
         this.setContentView(R.layout.chat);
@@ -69,11 +62,9 @@ public class ChatActivity extends Activity implements OnKeyListener, android.con
         this.message = (EditText)findViewById(R.id.msg);
         this.message.setOnKeyListener(this);
         
-        
-        this.messages = new ArrayList<HashMap<String, String>>();
         this.adapter = new SimpleAdapter( 
                 this, 
-                this.messages,
+                this.globalMessages,
                 R.layout.list_two_info_per_item,
                 new String[] {USERNAME, MESSAGE},
                 new int[] {R.id.text_1, R.id.text_2});
