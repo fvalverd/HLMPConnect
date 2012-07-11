@@ -1,8 +1,13 @@
 package android.HLMPConnect.Managers;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.UUID;
+
 import android.os.Handler;
 import android.util.Log;
 
@@ -92,7 +97,7 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		Hashtable<String, Long> fileMap = this.downloadTimes.get(fileHandlerId);
 		double seconds = (fileMap.get(END)- fileMap.get(START))/1000.0;
 		double size_kb = fileMap.get(SIZE)/1024.0;
-		this.application.saveTimeRecord(seconds, size_kb);
+		this.application.writeDowndloadTimeRecord(seconds, size_kb);
 	}
 	
 	private void addFileToStateFiles(String fileHandlerId, String fileName, String size) {
@@ -117,10 +122,25 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 		stateFiles.clear();
 		downloadTimes.clear();
 	}
+		
+	static public void copyFile(InputStream in, OutputStream out) throws IOException {
+	    byte[] buffer = new byte[1024];
+	    int read;
+	    while ((read = in.read(buffer)) != -1) {
+	      out.write(buffer, 0, read);
+	    }
+	}
+	
+	
+	
 	// FileTransferProtocol Manager API
 	
-	public void addFileInformationToFileData(FileInformation fileInformation) {
+	public void addFileInformationToProtocol(FileInformation fileInformation) {
 		fileTransferProtocol.getFileData().addFile(fileInformation);
+	}
+	
+	public void removeFileInformationFromProtocol(UUID id) {
+		fileTransferProtocol.getFileData().getFileList().remove(id);
 	}
 	
 	public void sendFileList() {

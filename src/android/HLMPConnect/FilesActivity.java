@@ -30,6 +30,10 @@ public class FilesActivity extends TabActivity implements OnClickListener {
         
         setContentView(R.layout.files);
         
+        HLMPApplication application = (HLMPApplication)getApplicationContext();
+        this.filesManager = application.getFilesManager();
+        this.filesManager.setFilesActivity(this);
+        
         this.tabHost = this.getTabHost();
 	    TabHost.TabSpec spec;
 	    Intent intent;
@@ -57,11 +61,6 @@ public class FilesActivity extends TabActivity implements OnClickListener {
 //	                      ,res.getDrawable(R.drawable.ic_tab_state)
 	    		).setContent(intent);
 	    this.tabHost.addTab(spec);
-        
-        HLMPApplication application = (HLMPApplication)getApplicationContext();
-        
-        this.filesManager = application.getFilesManager();
-        this.filesManager.setFilesActivity(this);
     }
     
     @Override

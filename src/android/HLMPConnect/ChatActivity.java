@@ -25,7 +25,7 @@ public class ChatActivity extends Activity implements OnKeyListener, android.con
 	public static final int GLOBAL_MESSAGE = 0;
 	
 	public static final String USERNAME	= "USERNAME";
-	public static final String MESSAGE		= "MESSAGE";
+	public static final String MESSAGE	= "MESSAGE";
 	
 	protected ChatManager chatManager;
 	protected EditText message;

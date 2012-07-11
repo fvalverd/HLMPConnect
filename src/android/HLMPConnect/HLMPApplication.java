@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 
@@ -54,6 +55,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	protected PingManager pingManager;
 	protected FilesManager filesManager;
 	protected Handler tabHostHandler;
+	protected Handler sharedFilesHandler;
 	
 	static final Handler mHandler = new Handler() {
 		@Override
@@ -121,6 +123,18 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	
 	public void setTabHostHandler(Handler tabHostHandler) {
 		this.tabHostHandler = tabHostHandler;
+	}
+	
+	public Handler getTabHostHandler() {
+		return this.tabHostHandler;
+	}
+	
+	public void setSharedFilesHandler(Handler sharedFilesHandler) {
+		this.sharedFilesHandler = sharedFilesHandler;
+	}
+	
+	public Handler getSharedFilesHandler() {
+		return this.sharedFilesHandler;
 	}
 	
 	// AdHocApp Overrides
@@ -321,6 +335,8 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	
 	public String createDownloadDir() {
 		// TODO: si es posible utilizar SDCARD
+		File f = getCacheDir();
+		Log.d(MSG_TAG, "DownloadCacheDirectory = " + f.getAbsolutePath());
 		
 		File downloadDir = getDir(FilesActivity.DOWNLOAD_DIR_NAME_SUFIX, MODE_WORLD_READABLE);
 		Log.d(MSG_TAG, "DownloadDir = " + downloadDir.getAbsolutePath());
@@ -337,7 +353,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	}
 
 	
-	public void saveTimeRecord(double seconds, double size_kb) {
+	public void writeDowndloadTimeRecord(double seconds, double size_kb) {
 		String results = "" + size_kb + " " + seconds + " " + size_kb/seconds + "\n";
 		FileOutputStream download_time_stream = null;
 		try {
