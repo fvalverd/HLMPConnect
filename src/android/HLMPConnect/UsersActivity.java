@@ -45,7 +45,9 @@ public class UsersActivity extends ListActivity implements OnClickListener {
         			userMap.put(IP, netUser.getIp().getHostAddress());
 					users.add(userMap);
 				}
-				adapter.notifyDataSetChanged();
+        		if (!adapter.isEmpty()) {
+        			adapter.notifyDataSetChanged();
+        		}
 			}
         }
     };

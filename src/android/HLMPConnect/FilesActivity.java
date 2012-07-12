@@ -19,7 +19,8 @@ public class FilesActivity extends TabActivity implements OnClickListener {
 	
 	public static final String DOWNLOAD_DIR_NAME_SUFIX = "downloads";
 	public static final String SHARED_DIR_NAME_SUFIX = "shared";
-	public static final String DOWNLOAD_TIMES_FILENAME = "download_times.txt";
+	public static final String CONNECT_TIMES_FILENAME_SUFIX = "_connect_times.txt";
+	public static final String DOWNLOAD_TIMES_FILENAME_SUFIX = "_download_times.txt";
 	
 	protected FilesManager filesManager;
 	private TabHost tabHost;

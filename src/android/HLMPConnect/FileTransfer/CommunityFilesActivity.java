@@ -82,7 +82,9 @@ public class CommunityFilesActivity extends ExpandableListActivity implements On
         			}
         			files.add(userFilesMap);
         		}
-        		((BaseExpandableListAdapter) adapter).notifyDataSetChanged();
+        		if (!adapter.isEmpty()) {
+        			((BaseExpandableListAdapter) adapter).notifyDataSetChanged();
+        		}
         	}
         }
     };

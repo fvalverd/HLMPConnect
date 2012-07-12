@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Calendar;
+import java.util.Date;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -56,6 +58,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	protected FilesManager filesManager;
 	protected Handler tabHostHandler;
 	protected Handler sharedFilesHandler;
+	private long startTimeMillis;
 	
 	static final Handler mHandler = new Handler() {
 		@Override
@@ -246,10 +249,12 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	}
 
 	public void connectingEventUpdate() {
+		this.saveConnectTime(HLMP_STARTING_SHOW);
 		hlmpDialogsHandler.sendEmptyMessage(HLMP_STARTING_SHOW);
 	}
-	
+
 	public void connectEventUpdate() {
+		this.saveConnectTime(HLMP_STARTING_HIDE);
 		tabHostHandler.sendEmptyMessage(Tabs.ACTIVE);
 		hlmpDialogsHandler.sendEmptyMessage(HLMP_STARTING_HIDE);
 	}
@@ -353,11 +358,15 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	}
 
 	
-	public void writeDowndloadTimeRecord(double seconds, double size_kb) {
-		String results = "" + size_kb + " " + seconds + " " + size_kb/seconds + "\n";
+	public void appendTextOnFilePath(String text, String fileNameSufix) {
+		Date date = Calendar.getInstance().getTime();
+		String results = date.toString() + "\t\t" + text + "\n";
 		FileOutputStream download_time_stream = null;
+		String fileName = this.communication.getConfiguration().getNetUser().getName();
+		fileName += fileNameSufix;
 		try {
-			download_time_stream = openFileOutput(FilesActivity.DOWNLOAD_TIMES_FILENAME, MODE_APPEND);
+			
+			download_time_stream = openFileOutput(fileName, MODE_APPEND);
 			download_time_stream.write(results.getBytes());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -371,4 +380,19 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 			}
 		}
 	}
+	
+	public void writeDowndloadTimeRecord(double seconds, double size_kb) {
+		String results = "" + size_kb + "\t" + seconds + "\t" + size_kb/seconds;
+		this.appendTextOnFilePath(results, FilesActivity.DOWNLOAD_DIR_NAME_SUFIX);
+	}
+	
+	private void saveConnectTime(int hlmpStartingState) {
+		if (hlmpStartingState == HLMP_STARTING_SHOW) {
+			this.startTimeMillis = System.currentTimeMillis();
+		}
+		else if (hlmpStartingState == HLMP_STARTING_HIDE) {			
+			this.appendTextOnFilePath("" + (System.currentTimeMillis()-this.startTimeMillis)/1000.0, FilesActivity.CONNECT_TIMES_FILENAME_SUFIX);
+		}
+	}
+	
 }

@@ -38,7 +38,9 @@ public class ChatActivity extends Activity implements OnKeyListener, android.con
         public void handleMessage(Message msg) {
         	switch (msg.what) {
 	        	case GLOBAL_MESSAGE: {
-	        		adapter.notifyDataSetChanged();
+	        		if (!adapter.isEmpty()) {
+	        			adapter.notifyDataSetChanged();
+	        		}
 		        }
         	}
         	
