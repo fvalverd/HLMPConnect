@@ -56,9 +56,7 @@ public class DownloadFilesActivity extends ListActivity implements OnItemClickLi
                     fileMap.put(SIZE, "" + file.length()/1024 + " KB");
                     files.add(fileMap);
                 }
-        		if (!adapter.isEmpty()) {
-        			adapter.notifyDataSetChanged();
-        		}
+        		adapter.notifyDataSetChanged();
         	}
         }
 	};

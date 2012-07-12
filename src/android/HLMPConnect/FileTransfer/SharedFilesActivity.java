@@ -86,9 +86,7 @@ public class SharedFilesActivity extends Activity implements OnClickListener, On
 				fileManager.removeFileInformationFromProtocol(fileInformationId);
 	        	fileManager.sendFileList();
 			}
-			if (!adapter.isEmpty()) {
-				adapter.notifyDataSetChanged();
-			}
+			adapter.notifyDataSetChanged();
 		}
 	};
 

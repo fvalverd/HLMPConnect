@@ -52,9 +52,7 @@ public class StateFilesActivity extends ListActivity {
         	for (HashMap<String, String> fileMap : files.values()) {
         		adapterFiles.add(fileMap);
     		}
-        	if (!adapter.isEmpty()) {
-        		adapter.notifyDataSetChanged();
-        	}
+        	adapter.notifyDataSetChanged();
         }
 	};
 	

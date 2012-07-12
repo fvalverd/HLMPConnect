@@ -42,14 +42,13 @@ import android.HLMPConnect.Managers.PingManager;
 
 
 public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserverI, ExceptionEventObserverI, NetInformationEventObserverI, WifiHandler, ConnectEventObserverI, ConnectingEventObserverI, DisconnectEventObserverI, DisconnectingEventObserverI, ManageDirectory {
+	
 	static final String MSG_TAG = "HLMPApplication";
 	
 	static final int HLMP_STARTING_SHOW = 0;
 	static final int HLMP_STARTING_HIDE = 1;
 	static final int HLMP_STOPPING_SHOW = 2;
 	static final int HLMP_STOPPING_HIDE = 3;
-	
-	
 	
 	protected Communication communication;
 	protected ChatManager chatManager;
@@ -59,6 +58,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 	protected Handler tabHostHandler;
 	protected Handler sharedFilesHandler;
 	private long startTimeMillis;
+	static HLMPApplication self;
 	
 	static final Handler mHandler = new Handler() {
 		@Override
@@ -94,7 +94,7 @@ public class HLMPApplication extends AdHocApp implements ErrorMessageEventObserv
 		};
     };
 	
-    static HLMPApplication self;
+    
     
     
     
