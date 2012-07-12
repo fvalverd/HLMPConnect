@@ -79,6 +79,7 @@ public class SharedFilesActivity extends Activity implements OnClickListener, On
 			}
 			else if (msg.what == REMOVE_FILE) {
 				String fileName = filesList.get(msg.arg1).get(FILENAME);
+				Log.d(MSG_TAG, "Removing from shared files: " + fileName);
 				UUID fileInformationId = UUID.fromString(filesList.get(msg.arg1).get(ID));
 				filesList.remove(msg.arg1);
 				Toast.makeText(filesActivity, fileName + " was removed from Shared Files!", Toast.LENGTH_SHORT).show();
@@ -145,7 +146,7 @@ public class SharedFilesActivity extends Activity implements OnClickListener, On
 		final File fileOnSharedDir = new File(sharedDir, fileName);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(filesActivity);
-	    builder.setMessage("Are you sure you want to remove " + fileName + " from Shared Files ?")
+		builder.setMessage("Are you sure you want to remove " + fileName + " from Shared Files ?")
         .setCancelable(false)
         .setPositiveButton("Delete", new android.content.DialogInterface.OnClickListener() {
 			

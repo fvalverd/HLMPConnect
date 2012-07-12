@@ -1,6 +1,8 @@
 package android.HLMPConnect.FileTransfer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +30,14 @@ public class DownloadFilesActivity extends ListActivity implements OnItemClickLi
 	
 	private static final String MSG_TAG = "HLMP -> DownloadFilesActivity";
 
-	private static final String FILENAME =	"FILENAME";
-	private static final String SIZE = 		"SIZE";
+	private static final String FILENAME	= "FILENAME";
+	private static final String SIZE		= "SIZE";
+	private static final String SHARE 		= "Share";
+	private static final String DELETE 		= "Delete";
+	
 	public static final int UPDATE_USERS_LIST = 0;
 	
+	private HLMPApplication application;
 	private ArrayList<HashMap<String, String>> files;
 	private SimpleAdapter adapter;
 	private FilesManager fileManager;
@@ -54,14 +60,15 @@ public class DownloadFilesActivity extends ListActivity implements OnItemClickLi
         	}
         }
 	};
-	
-	
+
+
+
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        HLMPApplication application = (HLMPApplication)getApplicationContext();
-    	this.fileManager = application.getFilesManager();
+        this.application = (HLMPApplication)getApplicationContext();
+    	this.fileManager = this.application.getFilesManager();
     	this.fileManager.setDownloadFilesHandler(this.downloadFilesHandler);
 
         files = new ArrayList<HashMap<String, String>>();
@@ -83,35 +90,48 @@ public class DownloadFilesActivity extends ListActivity implements OnItemClickLi
         this.setListAdapter(this.adapter);
         this.getListView().setOnItemClickListener(this);
     }
-
+	
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 		final String fileName = files.get(position).get(FILENAME);
 		final File downloadDir = getDir(FilesActivity.DOWNLOAD_DIR_NAME_SUFIX, MODE_WORLD_READABLE);
 		final File file = new File(downloadDir, fileName);
 		final FilesActivity filesActivity = fileManager.getFilesActivity();
 		
+		
+		
+		final String[] OPTIONS = {SHARE, DELETE};
 		AlertDialog.Builder builder = new AlertDialog.Builder(filesActivity);
-	    builder.setMessage("Are you sure you want to delete " + fileName + " ?")
-        .setCancelable(false)
-        .setPositiveButton("Delete", new OnClickListener() {
-			
-        	public void onClick(DialogInterface dialog, int arg1) {
-        		try {
-        			if (file.getCanonicalFile().delete()) {
-        				downloadFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
-        				Toast.makeText(filesActivity, fileName + " was deleted !", Toast.LENGTH_SHORT).show();
-        			}
-        		} catch (IOException e) {
-        			File file_tmp = new File(downloadDir, fileName);
-        			if (!file_tmp.exists()) {
-        				downloadFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
-        			}
-        		}
+		builder.setTitle("Select an option");
+		builder.setItems(OPTIONS, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface d, int choice) {
+				if (OPTIONS[choice].equals(DELETE)) {
+	        		try {
+	        			if (file.getCanonicalFile().delete()) {
+	        				downloadFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
+	        				Toast.makeText(filesActivity, fileName + " was deleted !", Toast.LENGTH_SHORT).show();
+	        			}
+	        		} catch (IOException e) {
+	        			File file_tmp = new File(downloadDir, fileName);
+	        			if (!file_tmp.exists()) {
+	        				downloadFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
+	        			}
+	        		}
+				}
+				else if (OPTIONS[choice].equals(SHARE)) {
+					try {
+	        			FileInputStream srcFileStream = new FileInputStream(file);
+	        			File newFile = new File(getDir(FilesActivity.SHARED_DIR_NAME_SUFIX, MODE_WORLD_READABLE), fileName);
+	        			FileOutputStream newFileStream = new FileOutputStream(newFile.getAbsolutePath());
+						FilesManager.copyFile(srcFileStream, newFileStream);
+						Toast.makeText(filesActivity,"Sharing " +  fileName + "...", Toast.LENGTH_SHORT).show();
+						application.getSharedFilesHandler().obtainMessage(SharedFilesActivity.ADD_FILE, newFile.getAbsolutePath()).sendToTarget();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
-		})
-        .setNegativeButton("Cancel", null);
-
-        AlertDialog alert = builder.create();
-        alert.show();
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 }

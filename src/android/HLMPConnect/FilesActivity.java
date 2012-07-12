@@ -57,7 +57,7 @@ public class FilesActivity extends TabActivity implements OnClickListener {
 	    this.tabHost.addTab(spec);
 	    
 	    intent = new Intent().setClass(this, StateFilesActivity.class);
-	    spec = this.tabHost.newTabSpec("state").setIndicator("State"
+	    spec = this.tabHost.newTabSpec("state").setIndicator("States"
 //	                      ,res.getDrawable(R.drawable.ic_tab_state)
 	    		).setContent(intent);
 	    this.tabHost.addTab(spec);

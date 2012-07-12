@@ -117,6 +117,13 @@ public class CommunityFilesActivity extends ExpandableListActivity implements On
 		this.getExpandableListView().setOnChildClickListener(this);
     }
 	
+	
+	@Override
+	protected void onResume() {
+		communityFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
+		super.onResume();
+	}
+	
 	@Override
 	protected void onRestart() {
 		communityFilesHandler.obtainMessage(UPDATE_USERS_LIST).sendToTarget();
