@@ -3,6 +3,8 @@ package android.HLMPConnect.FileTransfer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import android.app.ListActivity;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -59,8 +61,26 @@ public class StateFilesActivity extends ListActivity {
 	private final ViewBinder viewBinder = new ViewBinder() {
         public boolean setViewValue(View view, Object data, String textRepresentation) {
             if (view.getId() == R.id.downloadProgressBar) {
-            	Integer theProgress =  Integer.decode((String)data);
-            	((ProgressBar)view).setProgress(theProgress); 
+            	ProgressBar progressView = (ProgressBar) view;
+            	Integer newProgress =  Integer.decode((String)data);
+            	if (newProgress == 100) {
+            		Drawable color = getResources().getDrawable(R.drawable.completed_progress);
+            		Rect bounds = progressView.getProgressDrawable().getBounds();
+            		progressView.setProgressDrawable(color);
+            		progressView.getProgressDrawable().setBounds(bounds);
+            		progressView.setProgress(newProgress);
+            	}
+            	else if (newProgress == -1) {
+            		int oldProgress =  progressView.getProgress();
+            		Drawable color = getResources().getDrawable(R.drawable.failed_progress);
+            		Rect bounds = progressView.getProgressDrawable().getBounds();
+            		progressView.setProgressDrawable(color);
+            		progressView.getProgressDrawable().setBounds(bounds);
+            		progressView.setProgress(Integer.valueOf(oldProgress));
+            	}
+            	else  {
+            		progressView.setProgress(newProgress);
+            	}
             	return true;
             }
             return false;

@@ -239,7 +239,13 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 	public void downloadFileFailed(String fileHandlerId) {
-		// TODO: Notificar en el state que hubo un problema
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.UPDATE_DOWNLOAD_PERCENT,
+					-1,
+					0,
+					fileHandlerId).sendToTarget();
+		}
 	}
 
 	//	// Upload
@@ -283,7 +289,13 @@ public class FilesManager implements FileHandlerI, FileListHandlerI, RemoveUserE
 	}
 
 	public void uploadFileFailed(String fileHandlerId) {
-		// TODO: Notificar en la lista de estados que no se puede seguir subiendo
+		if (this.stateFilesHandler != null) {
+			this.stateFilesHandler.obtainMessage(
+					StateFilesActivity.UPDATE_UPLOAD_PERCENT,
+					-1,
+					0,
+					fileHandlerId).sendToTarget();
+		}
 	}
 
 
